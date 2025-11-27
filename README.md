@@ -2,6 +2,15 @@
 
 ## Agenda 
 
+  1. Linux
+     * Installation von Ubuntu 24.04 (auf virtual maschine) - mit ISO
+     * arp (mit Übung)
+     * DNS-Server aufsetzen
+     * dig verwenden
+     * .NET 8 (dotnet) unter Linux
+     * 
+
+
   1. Docker-Grundlagen 
      * [Übersicht Architektur](architektur.md)
      * [Was ist ein Container ?](container.md)
