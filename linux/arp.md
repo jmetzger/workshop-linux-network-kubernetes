@@ -49,6 +49,7 @@ Seit Ubuntu 22.04+ funktioniert `ip -s -s neigh flush all`.
 **Gesamten ARP-Cache leeren:**
 
 ```bash
+# -s -s zeigt: erweiterte Statistiken 
 sudo ip -s -s neigh flush all
 ```
 
