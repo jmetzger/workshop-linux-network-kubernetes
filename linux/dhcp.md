@@ -135,6 +135,4 @@ Achte auf:
 
 <img width="940" height="500" alt="image" src="https://github.com/user-attachments/assets/477bea19-408c-487b-8368-31ee66b6ed9e" />
 
-<img width="1344" height="768" alt="image" src="https://github.com/user-attachments/assets/acaed417-80e1-4bf6-a7d0-71fbc4fde58e" />
-
 
