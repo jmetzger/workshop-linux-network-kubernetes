@@ -4,7 +4,7 @@
 
   1. Linux
 
-     * [MAC-Adressen](netzwerk/mac-adressen.md)
+     * [MAC-Adressen/Layer2-Netzwerk/Broadcast-Domain](netzwerk/mac-adressen.md)
      * [Switches](netzwerk/switches.md)
      * Installation von Ubuntu 24.04 (auf virtual maschine) - mit ISO
      * arp (mit Übung)
