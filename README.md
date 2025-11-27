@@ -7,8 +7,8 @@
      * arp (mit Übung)
      * DNS-Server aufsetzen
      * dig verwenden
-     * .NET 8 (dotnet) unter Linux
-     * 
+     * [.NET 8 (dotnet) unter Linux](linux/dotnet8.md)
+ 
 
 
   1. Docker-Grundlagen 
