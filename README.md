@@ -8,9 +8,10 @@
      * [Layer2-Netzwerk/Broadcast-Domain](/netzwerk/layer2-netzwerk-brodcast-domain.md)
      * [Switches](netzwerk/switches.md)
      * Installation von Ubuntu 24.04 (auf virtual maschine) - mit ISO
-     * arp (mit Übung)
+     * [arp (mit Übung)](linux/arp.md)
      * DNS-Server aufsetzen
-     * dig verwenden
+     * [dig verwenden](linux/dig.md)
+     * [DHCP](linux/dhcp.md)
      * [.NET 8 (dotnet) unter Linux](linux/dotnet8.md)
  
 
