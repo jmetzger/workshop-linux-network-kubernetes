@@ -3,6 +3,8 @@
 ## Agenda 
 
   1. Linux
+
+     * [Switches](netzwerk/switches.md)
      * Installation von Ubuntu 24.04 (auf virtual maschine) - mit ISO
      * arp (mit Übung)
      * DNS-Server aufsetzen
