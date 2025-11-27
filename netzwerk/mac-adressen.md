@@ -9,7 +9,8 @@
   * Ein Layer-2-Netzwerk ist ein Netzwerksegment, in dem Geräte per MAC-Adresse kommunizieren und Switches die Weiterleitung übernehmen
   * Sie teilen sich die gleiche Broadcast - Domain.
 
+```
 PC1 ----- Switch ----- PC2
           |
           +---- PC3
-
+```
