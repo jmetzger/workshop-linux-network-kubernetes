@@ -15,11 +15,14 @@ sudo apt install dotnet-sdk-8.0 -y
 
  * Es werden noch ein Reihen von Abhängigkeiten installiert
 
-## Now dowload an sample and compile it
+## Now dowload an sample and compile it (run it)
+
+  * In addition it will also create an executable 
 
 ```
 # This takes a while 
 cd
 git clone https://github.com/dotnet/samples.git
 cd ~/samples/csharp/getting-started/console-webapiclient
+dotnet run 
 ```
