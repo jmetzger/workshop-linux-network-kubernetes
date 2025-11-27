@@ -77,7 +77,15 @@ Wähle ein Ziel im Netzwerk (z. B. das Gateway).
 arping -I <interface> <IP>
 ```
 
-Beispiel mit automatisch erkanntem Interface:
+```
+# Hin -> Broadcast -> Wer hat die IP (bitte MAC-Addresse) 
+arping -I eth1 10.135.0.74
+# Zurück Unicast (1:1) -> Ich habe sie
+```
+
+<img width="898" height="167" alt="image" src="https://github.com/user-attachments/assets/32aeb45c-6232-4407-9459-d8ee8cee24c6" />
+
+Beispiel mit erkanntem Interface:
 
 1. Interface anzeigen:
 
