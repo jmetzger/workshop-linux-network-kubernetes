@@ -73,7 +73,7 @@ Daher erreichen DHCP-Discover-Pakete alle Geräte im LAN.
 
 ---
 
-# 📦 **DHCP Discover – Ablauf (vereinfacht)**
+## 📦 **DHCP Discover – Ablauf (vereinfacht)**
 
 ---
 
@@ -99,7 +99,18 @@ Und dann kommen Schritt 2–4 (Offer → Request → Ack).
 
 ---
 
-# 🧪 **Mini-Übung (ideal fürs Training)**
+## 🧪 **Mini-Übung (ideal fürs Training)**
+
+### **0. Vorbereitung**
+
+```bash
+sudo apt update
+
+# ARP / Netzwerk / DHCP / Sniffer Tools
+sudo apt install -y \
+  isc-dhcp-client \
+  tcpdump
+```
 
 ### **1. DHCP Traffic beobachten**
 
@@ -125,7 +136,7 @@ Achte auf:
 
 ---
 
-# 🧑‍🏫 Perfekte Kurz-Erklärung
+## 🧑‍🏫 Perfekte Kurz-Erklärung
 
 > **DHCP Discover ist die erste Nachricht eines Geräts ohne IP, um einen DHCP-Server zu finden.
 > Es wird als Broadcast an alle Geräte im LAN gesendet, weil der Client die IP des Servers noch nicht kennt.
