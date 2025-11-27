@@ -5,6 +5,7 @@
   1. Linux
 
      * [MAC-Adressen/Layer2-Netzwerk/Broadcast-Domain](netzwerk/mac-adressen.md)
+     * [Layer2-Netzwerk/Broadcast-Domain](/netzwerk/layer2-netzwerk-brodcast-domain.md)
      * [Switches](netzwerk/switches.md)
      * Installation von Ubuntu 24.04 (auf virtual maschine) - mit ISO
      * arp (mit Übung)
