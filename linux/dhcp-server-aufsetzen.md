@@ -35,5 +35,19 @@ chmod 600 /etc/netplan/70-config.yaml
 ```
 
 ```
-netplan try 
+netplan try
+netplan apply 
 ```
+
+## Schritt3: dhcp laufen installieren 
+
+```
+apt update
+apt install isc-dhcp-server -y
+systemctl status isc-dhcp-server
+
+
+
+```
+
+
