@@ -106,6 +106,7 @@ network:
 ```
 
 ```
+chmod 600 70-config.yaml 
 netplan try
 ```
 
