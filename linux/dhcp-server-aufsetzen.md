@@ -45,42 +45,69 @@ netplan apply
 apt update
 apt install kea # Nachfolger von isc-dhcp-server 
 # nicht ordentlich gestartet, weil config noch nicht eingerichtet
-systemctl status kea 
-
-
-
+systemctl status kea-dhcp4-server
 ```
 
-## Schritt 4: config aufbauen 
-
 ```
-nano /etc/default/isc-dhcp-server
-INTERFACESv4="enp0s9"
+nano /etc/kea/kea-dhcp4.conf 
 ```
 
+```
+# Config anpassen
+{
+  "Dhcp4": {
+    "interfaces-config": {
+      "interfaces": [ "enp0s9" ]
+    },
+    "subnet4": [
+      {
+        "pools": [ { "pool":  "192.168.0.10 - 192.168.0.20" } ],
+        "subnet": "192.168.0.0/24"
+      }
+    ]
+  }
+}
+```
 
 ```
-nano /etc/dhcp/dhcpd.conf
+systemctl restart kea-dhcp4-server 
+systemctl status kea-dhcp4-server 
+journalctl -eu kea-dhcp4-server
 ```
 
-  * mit ip route:  10.0.2.2
 
+## 2. Maschine (ubuntu 24.04) hochziehen auch mit internal net
+
+### Schritt 1: runterfahren 
 
 ```
-authoritative;
+poweroff
+```
 
-default-lease-time 660;
-max-lease-time 6300;
+### Schritt 2: 3. Netwerk-Interface Internal Net einrichten 
 
-# range of subnet
-range 192.168.0.10 192.168.0.20;
 
-# gateway address
-#option routers 192.168.0.1;
 
-# DNS server address
-#option domain-name-servers 8.8.8.8, 8.8.4.4;
-#}
+
+### Schritt 3: Hochfahren und /etc/netplan einrichten aber mit dhcp 
+
+  * für Interface enp0s9
+
+```
+nano /etc/netplan/70-config.yaml
+```
+
+```
+network:
+  version: 2
+  ethernets:
+    enp0s9:
+      dhcp4: true
+```
+
+```
+netplan try
+```
 
 ```
 
