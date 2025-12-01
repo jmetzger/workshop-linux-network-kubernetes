@@ -18,7 +18,7 @@
      * [.NET 8 (dotnet) unter Linux](linux/dotnet8.md)
 
   1. Linux Security
-     * [Firewall ingress und egress](linux/firewall-ingress-egress.md)
+     * [Firewall ingress und egress](linux/firewall.md)
 
   1. Docker-Grundlagen 
      * [Übersicht Architektur](architektur.md)
