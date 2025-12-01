@@ -1,5 +1,39 @@
 # Firewall egress / ingress 
 
+## Installieren und nur eingehenden Traffic filtern 
+
+```
+systemctl status firewalld 
+apt search ^firewalld 
+apt install firewalld -y 
+systemctl status firewalld 
+
+firewall-cmd --state 
+# Was ist Betrieb für die Zone 
+firewall-cmd --list-all 
+firewall-cmd --get-active-zones 
+
+# Interfacd zu der Zone hinzufügen 
+firewall-cmd --zone=public --add-interface=enp0s8
+# jetzt in der public zone 
+firewall-cmd --get-active-zones 
+
+firewall-cmd --runtime-to-permanent 
+
+firewall-cmd --list-all 
+# Alle Services 
+firewall-cmd --get-services 
+# 
+firewall-cmd --info-service=http 
+
+## service http freischalten 
+firewall-cmd --add-service=http 
+
+firewall-cmd runtime-to-permanent 
+```
+
+
+
 ## Eingehenden und ausgehenden Traffik konfigurieren 
 
 
