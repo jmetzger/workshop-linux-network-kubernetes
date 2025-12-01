@@ -1,6 +1,18 @@
 # Install bind9 on Ubuntu 
 
-## Step 1: Disable systemd-resolve  
+  * Achtung, die Reihenfolge ist wichtig !
+
+## Schritt 1: Bind 9 installieren 
+
+```
+apt update
+apt install bind9 bind9utils bind9-doc
+systemctl status bind9 
+```
+
+
+
+## Step 2: Disable systemd-resolve  
 
 ```
 systemctl disable systemd-resolved
@@ -9,8 +21,4 @@ systemctl stop systemd-resolved
 rm -fR /etc/resolv.conf
 ```
 
-```
-apt update
-apt install bind9 bind9utils bind9-doc
-systemctl status bin9 
-```
+
