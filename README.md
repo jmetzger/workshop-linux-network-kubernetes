@@ -3,7 +3,7 @@
 ## Agenda 
 
   1. Linux Administration
-    * [Zeitzone setzen](linux/timedatectl.md)
+     * [Zeitzone setzen](linux/timedatectl.md)
 
   1. Linux
 
@@ -16,8 +16,9 @@
      * [dig verwenden](linux/dig.md)
      * [DHCP](linux/dhcp.md)
      * [.NET 8 (dotnet) unter Linux](linux/dotnet8.md)
- 
 
+  1. Linux Security
+     * [Firewall ingress und egress](linux/firewall-ingress-egress.md)
 
   1. Docker-Grundlagen 
      * [Übersicht Architektur](architektur.md)
