@@ -1,6 +1,6 @@
 # Firewall egress / ingress 
 
-## Installieren und nur eingehenden Traffic filtern 
+## Schritt 1: Installieren und nur eingehenden Traffic filtern 
 
 ```
 systemctl status firewalld 
@@ -34,7 +34,7 @@ firewall-cmd --runtime-to-permanent
 
 
 
-## Eingehenden und ausgehenden Traffik konfigurieren 
+## Schritt 2: Eingehenden und ausgehenden Traffik konfigurieren 
 
 ```
 # Alles auf Anfang // nur wenn interface vorher gewechselt wurde 
