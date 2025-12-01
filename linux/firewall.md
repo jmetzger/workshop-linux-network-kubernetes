@@ -49,8 +49,6 @@ firewall-cmd --direct --add-rule ipv4 filter OUTPUT 99 -j DROP
 
 ```
 firewall-cmd --permanent --direct --add-rule ipv4 filter OUTPUT 1 -p tcp -m tcp --dport 80 -j ACCEPT
-Allow HTTPS:
-
 firewall-cmd --permanent --direct --add-rule ipv4 filter OUTPUT 1 -p tcp -m tcp --dport 53 -j ACCEPT
 firewall-cmd --permanent --direct --add-rule ipv4 filter OUTPUT 1 -p udp --dport 53 -j ACCEPT
 ```
