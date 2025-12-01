@@ -2,6 +2,9 @@
 
 ## Agenda 
 
+  1. Linux Administration
+    * [Zeitzone setzen](linux/timedatectl.md)
+
   1. Linux
 
      * [MAC-Adressen/Layer2-Netzwerk/Broadcast-Domain](netzwerk/mac-adressen.md)
