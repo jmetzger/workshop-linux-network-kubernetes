@@ -37,6 +37,30 @@ firewall-cmd --runtime-to-permanent
 ## Eingehenden und ausgehenden Traffik konfigurieren 
 
 
+### Step 1: Alow established and drop everything else 
+
+
+```
+firewall-cmd --permanent --direct --add-rule ipv4 filter OUTPUT 0 -m state --state ESTABLISHED,RELATED -j ACCEPT
+# Low priority for deny, will get processed as last resort (99)
+firewall-cmd --permanent --direct --add-rule ipv4 filter OUTPUT 2 -j DROP
+```
+
+
+```
+# firewall-cmd --permanent --direct --add-rule ipv4 filter OUTPUT 1 -p tcp -m tcp --dport 80 -j ACCEPT
+Allow HTTPS:
+
+# firewall-cmd --permanent --direct --add-rule ipv4 filter OUTPUT 1 -p tcp -m tcp --dport 443 -j ACCEPT
+Allow for DNS queries:
+
+# firewall-cmd --permanent --direct --add-rule ipv4 filter OUTPUT 1 -p tcp -m tcp --dport 53 -j ACCEPT
+# firewall-cmd --permanent --direct --add-rule ipv4 filter OUTPUT 1 -p udp --dport 53 -j ACCEPT
+Deny everything else:
+
+# firewall-cmd --permanent --direct --add-rule ipv4 filter OUTPUT 2 -j DROP
+```
+
 
 
 
