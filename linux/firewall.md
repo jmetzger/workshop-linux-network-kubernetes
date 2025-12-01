@@ -41,10 +41,26 @@ firewall-cmd --runtime-to-permanent
 
 
 ```
-firewall-cmd --permanent --direct --add-rule ipv4 filter OUTPUT 0 -m state --state ESTABLISHED,RELATED -j ACCEPT
-# Low priority for deny, will get processed as last resort (99)
-firewall-cmd --permanent --direct --add-rule ipv4 filter OUTPUT 2 -j DROP
+# Alles auf Anfang
+firewall-cmd --zone=public --change-interface=enp0s8
 ```
+
+
+```
+# Prepare 
+firewall-cmd --zone=drop --add-service=ssh
+firewall-cmd --zone=drop --add-service=http 
+firewall-cmd --zone=drop --direct --add-rule ipv4 filter OUTPUT 0 -m state --state ESTABLISHED,RELATED -j ACCEPT
+# Low priority for deny, will get processed as last resort (99)
+firewall-cmd --zone=drop --direct --add-rule ipv4 filter OUTPUT 99 -j DROP
+```
+
+```
+# Testing it by changing interface
+# Inbound traffic should work
+firewall-cmd --zone=public --change-interface=enp0s8 
+```
+
 
 
 ```
