@@ -31,5 +31,9 @@ network:
 ```
 
 ```
-netplan test
+chmod 600 /etc/netplan/70-config.yaml
+```
+
+```
+netplan try 
 ```
