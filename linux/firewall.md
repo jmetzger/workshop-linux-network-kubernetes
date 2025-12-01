@@ -1,6 +1,6 @@
 # Firewall egress / ingress 
 
-## Eingehenden Traffik konfigurieren 
+## Eingehenden und ausgehenden Traffik konfigurieren 
 
 
 
