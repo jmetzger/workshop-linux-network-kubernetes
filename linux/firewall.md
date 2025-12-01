@@ -37,7 +37,7 @@ firewall-cmd --runtime-to-permanent
 ## Eingehenden und ausgehenden Traffik konfigurieren 
 
 
-### Step 1: Alow established and drop everything else 
+### Step 1: Allow established and drop everything else 
 
 
 ```
