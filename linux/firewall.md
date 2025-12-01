@@ -29,7 +29,7 @@ firewall-cmd --info-service=http
 ## service http freischalten 
 firewall-cmd --add-service=http 
 
-firewall-cmd runtime-to-permanent 
+firewall-cmd --runtime-to-permanent 
 ```
 
 
