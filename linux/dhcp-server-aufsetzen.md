@@ -111,4 +111,11 @@ netplan try
 ```
 
 ```
+# hat ip-adresse bekommen 
+ip a
+```
 
+```
+# DHCP-Maschine anpingen 
+ping 192.168.0.1 
+```
