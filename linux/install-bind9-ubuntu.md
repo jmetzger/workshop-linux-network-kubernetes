@@ -22,3 +22,26 @@ rm -fR /etc/resolv.conf
 ```
 
 
+## Step 3: Change settings in /etc/bin/named.conf.options 
+
+```
+// google public dns-server 
+forwarders {
+   8.8.8.8;
+   8.8.4.4;
+}
+
+listen-on { any; };
+
+// diese Zeile ändern dnssec-validation auto -> in
+dnssec-enable: yes
+dnssec-validation: yes;
+
+```
+
+## STep 4: Edit resolv.conf
+
+
+```
+nameserver 127.0.01
+```
