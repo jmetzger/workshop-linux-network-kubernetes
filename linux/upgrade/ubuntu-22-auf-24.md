@@ -55,5 +55,9 @@ apt autoremove
 
 ```
 # Laufen alle Services - Probleme zeigen failed 
-systemctl list-units -t service 
+systemctl list-units -t service
+# Optional 
+journalctl -b
+# Sind alle Interfaces da 
+ip a 
 ```
