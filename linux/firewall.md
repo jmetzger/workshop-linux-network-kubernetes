@@ -97,10 +97,18 @@ firewall-cmd --direct --remove-rule ipv4 filter OUTPUT 1 -p tcp -m tcp --dport 8
 ## Schritt 4: Logging aktivieren 
 
 ```
+# geht nur für eingehenden Traffic 
 firewall-cmd --get-log-denied
 firewall-cmd --set-log-denied=all
+journalctl -k | grep -i "REJECT"
+```
 
 ```
+# Logging für ausgehende Regeln vor allgemeiner Deny Regel 
+firewall-cmd --direct --add-rule ipv4 filter OUTPUT 99 -j LOG --log-prefix="[DROP]"
+journalctl -k | grep "[DROP]"
+```
+
 
 
 ### Ref:
