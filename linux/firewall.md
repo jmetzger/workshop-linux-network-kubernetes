@@ -39,6 +39,7 @@ firewall-cmd --runtime-to-permanent
 ```
 # Alles auf Anfang // nur wenn interface vorher gewechselt wurde 
 firewall-cmd --zone=public --change-interface=enp0s8
+firewall-cmd --zone=public --change-interface=enp0s8 --permanent 
 ```
 
 ```
