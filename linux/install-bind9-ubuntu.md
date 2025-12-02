@@ -22,7 +22,7 @@ rm -fR /etc/resolv.conf
 ```
 
 
-## Step 3: Change settings in /etc/bin/named.conf.options 
+## Step 3: Change settings in /etc/bind/named.conf.options 
 
 ```
 // google public dns-server
