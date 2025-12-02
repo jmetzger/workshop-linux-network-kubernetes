@@ -6,6 +6,7 @@
 # als root 
 apt clean all
 apt update
+apt upgrade
 apt dist-upgrade
 reboot
 apt autoremove --purge
