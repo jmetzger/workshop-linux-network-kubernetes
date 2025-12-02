@@ -56,6 +56,7 @@ curl -I http://www.google.de
 firewall-cmd --direct --add-rule ipv4 filter OUTPUT 1 -p tcp -m tcp --dport 80 -j ACCEPT
 # geht auch ohne -m tcp
 firewall-cmd --direct --add-rule ipv4 filter OUTPUT 1 -p tcp --dport 80 -j ACCEPT
+firewall-cmd --direct --add-rule ipv4 filter OUTPUT 1 -p tcp --dport 443 -j ACCEPT
 ```
 
 ```
