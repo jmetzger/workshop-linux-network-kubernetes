@@ -25,7 +25,7 @@ apt install ubuntu-release-upgrader-core -y
 grep 'lts' /etc/update-manager/release-upgrades
 ```
 
-### Automatische Installation 
+## Automatische Installation 
 
   * Achtung Fremd-Repos können Probleme machen und sollten vorher deaktiviert werden 
 
@@ -36,5 +36,15 @@ do-release-upgrade -f DistUpgradeViewNonInteractive
   * Danach muss händisch ein Reboot durchgeführt werden
 
 ```
+# Auf jeden Fall rebooten
 sudo reboot
+```
+
+## Nach dem Reboot 
+
+```
+# ssh war nicht gestartet
+systemctl start ssh 
+# aktivieren für reboot
+systemctl enable ssh
 ```
