@@ -44,7 +44,6 @@ netplan apply
 ```
 apt update
 apt install kea # Nachfolger von isc-dhcp-server 
-# nicht ordentlich gestartet, weil config noch nicht eingerichtet
 systemctl status kea-dhcp4-server
 ```
 
