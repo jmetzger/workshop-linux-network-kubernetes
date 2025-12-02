@@ -5,6 +5,15 @@
   * DHCP-DDNS Server
   * https://kea.readthedocs.io/en/kea-2.2.0/arm/ddns.html
 
+## Reservierung pro MAC 
+
+```
+"reservations": [{
+  "hw-address": "00:11:22:33:44:55",
+  "hostname": "myhost"
+}]
+```
+
 ## Walkthrough 
 
 Hier die wesentlichen Schritte für KEA DDNS mit BIND 9:
