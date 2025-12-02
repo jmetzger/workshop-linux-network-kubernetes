@@ -74,7 +74,14 @@ Wähle ein Ziel im Netzwerk (z. B. das Gateway).
 ### 🔍 ARP-Request senden:
 
 ```bash
+# das macht keinen eintrag im Cache
+# nur zum Testen
 arping -I <interface> <IP>
+# Das jedoch schon (eintrag erfolgt)
+wget <IP-Adresse>
+# z.B.
+wget 192.168.56.102
+ip neigh 
 ```
 
 ```
@@ -99,52 +106,3 @@ Beispiel mit erkanntem Interface:
    sudo arping -I eth0 192.168.178.1
    ```
 
-👉 **Aufgabe:**
-
-* Führe `arping` gegen dein Gateway aus
-* Notiere, ob du ARP-Replys bekommst
-* Teste einen nicht existierenden Host (z. B. 192.168.178.222) und vergleiche
-
----
-
-## 🔄 5. Beobachten, wie sich der ARP-Cache verändert
-
-### Schritt 1: Cache leeren
-
-```bash
-sudo ip -s -s neigh flush all
-```
-
-### Schritt 2: `arping` ausführen
-
-```bash
-sudo arping -I eth0 192.168.178.1
-```
-
-### Schritt 3: Cache prüfen
-
-```bash
-ip neigh
-```
-
-👉 **Aufgabe:**
-
-* Beobachte, wie nach dem `arping` ein neuer Eintrag erscheint
-* Prüfe, wie der Status sich verändert
-  (z. B. `REACHABLE`, `STALE`, `DELAY`, `FAILED`)
-* Warte 1–2 Minuten und prüfe erneut
-
----
-
-# 🎯 **Zusammenfassung (für Teilnehmer)**
-
-In dieser Übung hast du gelernt:
-
-* wie ARP funktioniert
-* wie man den ARP-Cache unter Ubuntu 24.04 einsehen und löschen kann
-* wie `arping` ARP aktiv nutzt
-* wie der ARP-Cache sich dynamisch aktualisiert
-
----
-
-Wenn du willst, Sunshine ☀️, erweitere ich dir diese Übung um eine **Mini-Live-Demo**, **Erklärbilder**, oder eine **Multiple-Choice-Testseite** für den Kurs.
