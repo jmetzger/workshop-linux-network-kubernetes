@@ -69,7 +69,7 @@ journalctl -eu named
 ## Step 8: Setup a zone 
 
 ```
-# Zone in der Datei /etc/bind/named.conf.local hinzufügen
+// Zone in der Datei /etc/bind/named.conf.local hinzufügen
 zone "training.local" {
     type master;
     file "/etc/bind/db.training.local";
