@@ -8,18 +8,18 @@ apt clean all
 apt update
 apt upgrade
 apt dist-upgrade
-reboot
+# Optional reboot
+# reboot
 apt autoremove --purge
 ```
 
-### Updater installieren 
+## Updater installieren 
 
 ```
 apt install ubuntu-release-upgrader-core -y
-# Sicherstellen, dass wirklich LTS eingestellt ist
 ```
 
-### Überprüfen, dass wirklich auf die neueste LTS upgegradet wird
+## Überprüfen, dass wirklich auf die neueste LTS upgegradet wird
 
 ```
 grep 'lts' /etc/update-manager/release-upgrades
@@ -30,7 +30,7 @@ grep 'lts' /etc/update-manager/release-upgrades
   * Achtung Fremd-Repos können Probleme machen und sollten vorher deaktiviert werden 
 
 ```
-apt install ubuntu-release-upgrader-core -y
+do-
 ```
 
   * Danach muss händisch ein Reboot durchgeführt werden
