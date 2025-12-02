@@ -37,7 +37,7 @@ listen-on { any; };
 dnssec-validation yes;
 ```
 
-## Step 4: Edit resolv.conf
+## Step 4: Edit /etc/resolv.conf
 
 
 ```
