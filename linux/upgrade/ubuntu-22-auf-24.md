@@ -30,7 +30,7 @@ grep 'lts' /etc/update-manager/release-upgrades
   * Achtung Fremd-Repos können Probleme machen und sollten vorher deaktiviert werden 
 
 ```
-do-
+do-release-upgrade 
 ```
 
   * Danach muss händisch ein Reboot durchgeführt werden
