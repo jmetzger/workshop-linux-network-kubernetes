@@ -48,3 +48,12 @@ systemctl start ssh
 # aktivieren für reboot
 systemctl enable ssh
 ```
+
+```
+apt autoremove
+```
+
+```
+# Laufen alle Services - Probleme zeigen failed 
+systemctl list-units -t service 
+```
