@@ -14,9 +14,14 @@
      * [arp (mit Übung)](linux/arp.md)
      * [DNS-Server aufsetzen](linux/install-bind9-ubuntu.md)
      * [dig verwenden](linux/dig.md)
+    
+ 1. DHCP
      * [DHCP](linux/dhcp.md)
      * [DHCP-Server aufsetzen](linux/dhcp-server-aufsetzen.md)
      * [DHCP - Reservations - hostname, hw-addr, ip](linux/dhcp-kea-reservations.md)
+     * [DHCP und DNS verheiraten](linux/dhcp-und-dns-verheiraten.md)
+
+  1. dotnet
      * [.NET 8 (dotnet) unter Linux](linux/dotnet8.md)
 
   1. Linux Security
