@@ -1,5 +1,5 @@
-TABLISHED# Firewall egress / ingress 
-
+# Firewall Regeln setzen 
+ 
 ## Schritt 1: Installieren und nur eingehenden Traffic filtern 
 
 ```
