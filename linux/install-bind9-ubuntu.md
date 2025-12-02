@@ -100,3 +100,8 @@ ubuntu22   IN      A       192.168.56.101
 ```
 systemctl restart named
 ```
+
+```
+ping ubuntu22.training.local
+dig A ubuntu22.training.local
+```
