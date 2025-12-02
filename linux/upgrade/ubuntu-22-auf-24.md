@@ -6,7 +6,7 @@
 # als root 
 apt clean all
 apt update
-apt upgrade
+apt upgrade -y
 apt dist-upgrade
 # Optional reboot
 # reboot
