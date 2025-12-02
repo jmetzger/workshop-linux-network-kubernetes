@@ -93,3 +93,16 @@ firewall-cmd --get-all-rules --direct
 # z.B.
 firewall-cmd --direct --remove-rule ipv4 filter OUTPUT 1 -p tcp -m tcp --dport 80 -j ACCEPT
 ```
+
+## Schritt 4: Logging aktivieren 
+
+```
+firewall-cmd --get-log-denied
+firewall-cmd --set-log-denied=all
+
+```
+
+
+### Ref:
+
+  * https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/7/html/security_guide/configuring_logging_for_denied_packets
