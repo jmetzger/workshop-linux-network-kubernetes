@@ -5,7 +5,7 @@
   * DHCP-DDNS Server
   * https://kea.readthedocs.io/en/kea-2.2.0/arm/ddns.html
 
-## Reservierung pro MAC 
+## Reservierung pro MAC (muss erstellt werden) 
 
 ```
 "reservations": [{
