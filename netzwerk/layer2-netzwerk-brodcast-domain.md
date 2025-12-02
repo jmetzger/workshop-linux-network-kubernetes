@@ -1,4 +1,4 @@
-# Layer2- Netzwerk und B
+# Layer2- Netzwerk und Broadcast
 
 ## Was ist ein Layer 2 - Netzwerk 
 
