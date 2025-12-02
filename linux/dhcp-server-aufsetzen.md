@@ -16,6 +16,11 @@ ip a
 ```
 
 ```
+mv /etc/kea/kea-dhcp4.conf /etc/kea/kea-dhcp4.conf.bkup
+nano kea-dhcp4.conf
+```
+
+```
 # Anlegen _>
 # in /etc/netplan/70-config.yaml
 # statisch eintragen
