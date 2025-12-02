@@ -36,10 +36,6 @@ network:
 ```
 
 ```
-chmod 600 /etc/netplan/70-config.yaml
-```
-
-```
 netplan try
 netplan apply 
 ```
