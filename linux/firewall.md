@@ -49,13 +49,30 @@ firewall-cmd --direct --add-rule ipv4 filter OUTPUT 99 -j DROP
 ```
 
 ```
+curl -I http://www.google.de
+```
+
+```
 firewall-cmd --direct --add-rule ipv4 filter OUTPUT 1 -p tcp -m tcp --dport 80 -j ACCEPT
+```
+
+```
+curl -I http://www.google.de 
+```
+
+```
 firewall-cmd --direct --add-rule ipv4 filter OUTPUT 1 -p tcp -m tcp --dport 53 -j ACCEPT
 firewall-cmd --direct --add-rule ipv4 filter OUTPUT 1 -p udp --dport 53 -j ACCEPT
 ```
 
 ```
-# alle regelnn anzeigen lassen
+curl -I http://www.google.de
+```
+
+
+```
+# alle Regeln anzeigen lassen
+firewall-cmd --list-all
 firewall-cmd --get-all-rules --direct 
 ```
 
