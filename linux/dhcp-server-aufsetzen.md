@@ -17,7 +17,7 @@ ip a
 
 ```
 mv /etc/kea/kea-dhcp4.conf /etc/kea/kea-dhcp4.conf.bkup
-nano kea-dhcp4.conf
+nano /etc/kea/kea-dhcp4.conf
 ```
 
 ```
