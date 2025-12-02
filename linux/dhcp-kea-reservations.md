@@ -8,7 +8,7 @@
 // Diese an die Datei anfügen 
 "reservations": [
     {
-        "duid": "01:02:03:04:05:06:07:08:09:0A",
+        "hw-address": "01:02:03:04:05:06",
 
         "ip-addresses": [
             "192.168.0.10"
