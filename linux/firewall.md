@@ -80,3 +80,14 @@ firewall-cmd --get-all-rules --direct
 # Regeln permanent setzen
 firewall-cmd --runtime-to-permanent 
 ```
+
+
+```
+# Regeln löschen
+# Schritt 1: direkte Regeln anzeigen
+firewall-cmd --get-all-rules --direct
+# Dann Zeile rauskopieren und 
+# firewall-cmd --direct --remove-rule davor schreiben
+# z.B.
+firewall-cmd --direct --remove-rule ipv4 filter OUTPUT 1 -p tcp -m tcp --dport 80 -j ACCEPT
+```
