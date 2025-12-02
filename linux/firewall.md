@@ -106,6 +106,9 @@ journalctl -k | grep -i "REJECT"
 ```
 # Logging für ausgehende Regeln VOR allgemeiner Deny Regel 
 firewall-cmd --direct --add-rule ipv4 filter OUTPUT 98 -j LOG --log-prefix="[DROP]"
+# Regeln auslösen
+telnet 192.168.56.102 22 
+
 journalctl -k | grep "DROP"
 ```
 
