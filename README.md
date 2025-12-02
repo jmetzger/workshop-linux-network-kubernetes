@@ -16,6 +16,7 @@
      * [dig verwenden](linux/dig.md)
      * [DHCP](linux/dhcp.md)
      * [DHCP-Server aufsetzen](linux/dhcp-server-aufsetzen.md)
+     * [DHCP - Reservations - hostname, hw-addr, ip](linux/dhcp-kea-reservations.md)
      * [.NET 8 (dotnet) unter Linux](linux/dotnet8.md)
 
   1. Linux Security
