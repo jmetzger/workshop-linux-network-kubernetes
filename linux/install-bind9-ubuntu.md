@@ -42,6 +42,7 @@ dnssec-validation yes;
 
 ```
 nameserver 127.0.0.1
+ping www.google.de
 ```
 
 ## Step 5: Restart named 
