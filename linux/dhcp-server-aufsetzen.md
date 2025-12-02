@@ -16,11 +16,6 @@ ip a
 ```
 
 ```
-mv /etc/kea/kea-dhcp4.conf /etc/kea/kea-dhcp4.conf.bkup
-nano /etc/kea/kea-dhcp4.conf
-```
-
-```
 # Anlegen _>
 # in /etc/netplan/70-config.yaml
 # statisch eintragen
@@ -47,6 +42,11 @@ apt update
 apt install kea # Nachfolger von isc-dhcp-server 
 systemctl status kea-dhcp4-server
 ```
+
+```
+mv /etc/kea/kea-dhcp4.conf /etc/kea/kea-dhcp4.conf.bkup
+```
+
 
 ```
 nano /etc/kea/kea-dhcp4.conf 
