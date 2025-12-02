@@ -12,9 +12,10 @@
      * [Switches](netzwerk/switches.md)
      * Installation von Ubuntu 24.04 (auf virtual maschine) - mit ISO
      * [arp (mit Übung)](linux/arp.md)
-     * DNS-Server aufsetzen
+     * [DNS-Server aufsetzen](linux/install-bind9-ubuntu.md)
      * [dig verwenden](linux/dig.md)
      * [DHCP](linux/dhcp.md)
+     * [DHCP-Server aufsetzen](linux/dhcp-server-aufsetzen.md)
      * [.NET 8 (dotnet) unter Linux](linux/dotnet8.md)
 
   1. Linux Security
