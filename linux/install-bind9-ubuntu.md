@@ -41,7 +41,7 @@ dnssec-validation yes;
 
 
 ```
-nameserver 127.0.01
+nameserver 127.0.0.1
 ```
 
 ## Step 5: Restart named 
