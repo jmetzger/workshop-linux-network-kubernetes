@@ -6,7 +6,7 @@
 
 ```
 apt update
-apt install apache2
+apt install apache2 -y
 a2enmod ssl
 systemctl restart apache2 
 
