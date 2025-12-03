@@ -81,6 +81,7 @@ https://backend.tln<tlnnr>.t3isp.de
 ## Test Certificate with ssl labs 
 
   * https://ssllabs.com
+  * https://github.com/testssl/testssl.sh
 
 ## Refs:
 
