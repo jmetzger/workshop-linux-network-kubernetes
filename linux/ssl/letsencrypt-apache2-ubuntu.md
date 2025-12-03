@@ -32,7 +32,7 @@ nano backend.tln<tlnnr>.t3isp.de.conf
 ```
 
 ```
-/var/www
+cd /var/www
 mkdir -p backend.tln<tlnr>.t3isp.de/html
 cd backned.tln<tlnnr>.t3isp.de/html/
 echo "ich bin backend von jochen" > index.html
