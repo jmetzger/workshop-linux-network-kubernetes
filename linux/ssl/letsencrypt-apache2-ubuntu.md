@@ -65,6 +65,10 @@ apt install -y certbot python3-certbot-apache
 
 ```
 certbot --apache --register-unsafely-without-email 
+# gleich mit domains
+# dann wird man nicht mehr gefragt 
+# certbot --apache --register-unsafely-without-email -d backend.tln1.t3isp.de 
+
 ```
 
 ## Test with your browser 
