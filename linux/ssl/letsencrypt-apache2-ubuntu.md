@@ -1,7 +1,5 @@
 # Letsencrypt apache2 auf Ubuntu 
 
-# Apache SSL with letsencrypt ssl 
-
 ## Step 0:
 
 ```
