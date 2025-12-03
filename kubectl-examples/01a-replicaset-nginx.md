@@ -74,3 +74,9 @@ nano rs.yml
 kubectl apply -f .
 kubectl get pods
 ```
+
+## Aufräumen 
+
+```
+kubectl delete -f .
+```
