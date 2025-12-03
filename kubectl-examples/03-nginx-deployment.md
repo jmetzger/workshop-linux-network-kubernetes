@@ -48,6 +48,7 @@ kubectl get all
 ## Optional: Change image - Version 
 
 ```
+# Ändern des images von nginx:1.22 in nginx:1.23
 nano nginx-deployment.yml 
 ```
 
@@ -55,7 +56,7 @@ nano nginx-deployment.yml
 ### Version 1: (optical nicer)
 
 ```
-# Ändern des images von nginx:1.22 in nginx:1.23
+
 # danach 
 kubectl apply -f . && watch kubectl get pods 
 ```
