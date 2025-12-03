@@ -26,8 +26,8 @@ nano backend.tln<tlnnr>.t3isp.de.conf
     ServerName backend.tln<tlnnr>.t3isp.de
     ServerAlias alternative.tln<tlnnr>.t3isp.de
     DocumentRoot /var/www/backend.tln<tlnnr>.t3isp.de/html
-    ErrorLog /var/log/httpd/backend-tln<tlnnr>-t3isp-de-error.log
-    CustomLog /var/log/httpd/bakend-tln<tlnnr>-t3isp-de-access.log combined
+    ErrorLog /var/log/apache2/backend-tln<tlnnr>-t3isp-de-error.log
+    CustomLog /var/log/apache2/bakend-tln<tlnnr>-t3isp-de-access.log combined
 </VirtualHost>
 ```
 
