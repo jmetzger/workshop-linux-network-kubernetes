@@ -22,7 +22,11 @@ So there are other tools/distri around helping you with that.
 
 ### Disadvantages 
 
-  * Zusatzkomponenten (bspw. metallb - LoadBalancer)  sind oftmals etwas schwieriger instalieren ( inkl. microk8s enable )
+  * Am komplexesten für die Installation
+
+### Vorteil 
+
+  * Sehr flexibel 
 
 ## microk8s 
 
