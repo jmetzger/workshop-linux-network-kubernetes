@@ -15,34 +15,38 @@ systemctl restart apache2
 
 ## Step 1: setup virtual host 
 
-```
-# /etc/httpd/conf/httpd.conf 
-IncludeOptional sites-enabled/*.conf
 
 ```
+cd /etc/apache2/sites-available/
+nano backend.tln<tlnnr>.t3isp.de.conf 
+```
 
 ```
-#  x = 1 to 7
-#  apx.t3isp.de 
-#  mx.t3isp.de
-# mkdir /etc/httpd/sites-enabled
-# cd /etc/httpd/sites-enabled 
-# vi ap1.t3isp.de.conf 
 <VirtualHost *:80>
-    ServerName www.ap1.t3isp.de
-    ServerAlias ap1.t3isp.de
-    DocumentRoot /var/www/ap1.t3isp.de/html
-    ErrorLog /var/log/httpd/ap1-t3isp-de-error.log
-    CustomLog /var/log/httpd/ap1-t3isp-de-access.log combined
+    ServerName backend.tln<tlnnr>.t3isp.de
+    ServerAlias alternative.tln<tlnnr>.t3isp.de
+    DocumentRoot /var/www/backend.tln<tlnnr>.t3isp.de/html
+    ErrorLog /var/log/httpd/backend-tln<tlnnr>-t3isp-de-error.log
+    CustomLog /var/log/httpd/bakend-tln<tlnnr>-t3isp-de-access.log combined
 </VirtualHost>
 ```
 
 ```
 /var/www
-mkdir -p ap1.t3isp.de/html
+mkdir -p backend.tln<tlnr>.t3isp.de/html
 cd ap1.t3isp.de/html/
-echo "ich bin ap1 von jochen" > index.html
+echo "ich bin backend von jochen" > index.html
 ```
+
+```
+a2ensite  backend.tln<tln1>.t3isp.de
+```
+
+```
+# Im browser testen
+```
+
+
 
 ## Install certbot (Centos 8) 
 
