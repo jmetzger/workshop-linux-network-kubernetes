@@ -46,6 +46,8 @@ echo "ich bin backend von jochen" > index.html
 
 ```
 a2ensite  backend.tln<tln1>.t3isp.de
+a2dissite 000-default.conf
+systemctl reload apache2 
 ```
 
 ```
