@@ -48,38 +48,10 @@ a2ensite  backend.tln<tln1>.t3isp.de
 
 
 
-## Install certbot (Centos 8) 
+## Install certbot
 
 ```
-dnf install -y epel-release 
-dnf install -y certbot python3-certbot-apache mod_ssl
-```
-
-## Variant 1: Attention: virtual host - domain must be different than hostname 
-
-```
-e.g. ap1.t3isp.de (virtual host domain) != hostname 
-# if this is not the case change hostname
-hostnamectl set-hostname main.training.local 
-
-# be sure to restart apache to take 
-systemctl restart httpd 
-
-```
-
-## Variant 2: Remove <VirtualHost> </VirtualHost> - block vom ssl.conf 
-
-```
-# ssl.conf - Created by installation of mod_ssl. 
-cd /etc/httpd/conf.d/
-# vi ssl.conf 
-remove
-<VirtualHost>
-....
-</VirtualHost>
-
-systemctl restart httpd 
-
+apt install -y certbot python3-certbot-apache mod_ssl
 ```
 
 ## Use certbot to configure 
