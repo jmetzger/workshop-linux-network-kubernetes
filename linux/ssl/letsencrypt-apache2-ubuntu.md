@@ -46,7 +46,7 @@ echo "ich bin backend von jochen" > index.html
 
 ```
 a2ensite  backend.tln<tln1>.t3isp.de
-systemctl reload apache2 --register-unsafely-without-email
+systemctl reload apache2 
 ```
 
 ```
