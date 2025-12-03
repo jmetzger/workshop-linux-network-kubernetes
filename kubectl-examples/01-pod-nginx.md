@@ -38,3 +38,7 @@ kubectl describe pod nginx-static-web
 kubectl get pod/nginx-static-web -o yaml
 
 ```
+
+```
+kubectl delete -f nginx-static.yml
+```
