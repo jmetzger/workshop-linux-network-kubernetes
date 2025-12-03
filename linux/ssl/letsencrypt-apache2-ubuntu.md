@@ -58,19 +58,19 @@ systemctl reload apache2
 ## Install certbot
 
 ```
-apt install -y certbot python3-certbot-apache mod_ssl
+apt install -y certbot python3-certbot-apache
 ```
 
 ## Use certbot to configure 
 
 ```
-certbot --apache --register-unsafely-without-email 
+certbot --apache  
 ```
 
 ## Test with your browser 
 
 ```
-https://ap1.t3isp.de 
+https://backend.tln<tlnnr>.t3isp.de 
 
 ```
 
