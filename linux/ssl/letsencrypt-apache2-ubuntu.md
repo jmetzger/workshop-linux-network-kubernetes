@@ -64,7 +64,7 @@ apt install -y certbot python3-certbot-apache
 ## Use certbot to configure 
 
 ```
-certbot --apache  
+certbot --apache --register-unsafely-without-email 
 ```
 
 ## Test with your browser 
