@@ -9,9 +9,15 @@ apt update
 apt install apache2 -y
 a2enmod ssl
 systemctl restart apache2 
+```
 
+## Step 0.5: 
 
 ```
+test im browser
+app.tln<tlnnr>.t3isp.de
+```
+
 
 ## Step 1: setup virtual host 
 
