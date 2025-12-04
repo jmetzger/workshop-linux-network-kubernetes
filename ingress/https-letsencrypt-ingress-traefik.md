@@ -100,6 +100,7 @@ kubectl apply -f .
 
 ```
 kubectl describe certificate example-tls
+# -> hier muss True bei READY drin stehen 
 kubectl get cert example-tls
 kubectl get secret example-tls
 # cr = certificaterequest 
