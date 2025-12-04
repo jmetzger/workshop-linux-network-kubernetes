@@ -24,6 +24,9 @@
   1. dotnet
      * [.NET 8 (dotnet) unter Linux](linux/dotnet8.md)
 
+  1. Root-CA-cert
+     * [Root-CA cert mit ansible ausrollen](/linux/ssl/root-ca-cert-auf-server-automatisch-ausrollen-mit-ansible.md)
+
   1. Linux Security
      * [Firewall ingress und egress](linux/firewall.md)
 
