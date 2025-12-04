@@ -41,32 +41,44 @@ kubectl get cert
 ## Schritt 4: Ingress-Objekt mit TLS erstellen 
 
 ```
-# tls-ingress.yaml
+
+
+```
+# Ingress
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: example-ingress
   annotations:
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    ingress.kubernetes.io/rewrite-target: /
 spec:
-  ingressClassName: nginx
+  ingressClassName: traefik
   tls:
   - hosts:
-    - test.devopslearnwith.us
+    - <euer-name>.app.do.t3isp.de
     secretName: example-tls
   rules:
-  - host: test.devopslearnwith.us
+  - host: "<euer-name>.app.do.t3isp.de"
     http:
       paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: example-service
-            port:
-              number: 80
+        - path: /apple
+          pathType: Prefix
+          backend:
+            service:
+              name: apple-service
+              port:
+                number: 80
+        - path: /banana
+          pathType: Exact
+          backend:
+            service:
+              name: banana-service
+              port:
+                number: 80
 ```
+
+
 
 ```
 Schritt 5: Testen
