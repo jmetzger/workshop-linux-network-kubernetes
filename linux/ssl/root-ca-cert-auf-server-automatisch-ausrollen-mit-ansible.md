@@ -114,12 +114,6 @@ ansible-playbook playbooks/deploy-ca.yml
 
 # Mit Ausgabe
 ansible-playbook playbooks/deploy-ca.yml -v
-
-# Nur bestimmte Gruppe
-ansible-playbook playbooks/deploy-ca.yml --limit webservers
-
-# Einzelner Server
-ansible-playbook playbooks/deploy-ca.yml --limit web-ubuntu01.firma.local
 ```
 
 ## 5. Verifizieren
