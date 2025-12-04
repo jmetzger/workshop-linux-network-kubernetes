@@ -30,6 +30,11 @@ spec:
           class: traefik
 ```
 
+```
+kubectl get clusterissuer letsencrypt-prod
+kubectl describe clusterissuer letsencrypt-prod 
+```
+
 ## Schritt 3: Herausfinden, ob Zertifikate erstellt werden 
 
 ```
