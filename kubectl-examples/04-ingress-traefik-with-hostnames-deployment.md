@@ -3,7 +3,8 @@
 ## Step 1: Walkthrough 
 
 ```
-cd 
+cd
+mkdir -p manifests 
 cd manifests
 mkdir abi 
 cd abi
