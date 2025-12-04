@@ -27,7 +27,7 @@ spec:
     solvers:
     - http01:
         ingress:
-          class: nginx
+          class: traefik
 ```
 
 ## Schritt 3: Herausfinden, ob Zertifikate erstellt werden 
