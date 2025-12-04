@@ -35,18 +35,16 @@ kubectl get clusterissuer letsencrypt-prod
 kubectl describe clusterissuer letsencrypt-prod 
 ```
 
-## Schritt 3: Herausfinden, ob Zertifikate erstellt werden 
+## Schritt 3: Ingress-Objekt mit TLS erstellen 
 
 ```
-kubectl describe certificate example-tls
-kubectl get cert
+cd
+mkdir -p manifests/abi
+cd manifests/abi
+# falls datei schon da ist 
+mv ingress.yaml ingress.yaml.bkup 
+nano ingress-tls.yaml 
 ```
-
-
-## Schritt 4: Ingress-Objekt mit TLS erstellen 
-
-```
-
 
 ```
 # Ingress
@@ -83,11 +81,23 @@ spec:
                 number: 80
 ```
 
+```
+kubectl apply -f .
+```
 
 
+
+
+
+
+## Schritt 3: Herausfinden, ob Zertifikate erstellt werden 
+
 ```
-Schritt 5: Testen
+kubectl describe certificate example-tls
+kubectl get cert
 ```
+
+
 
 
 ## Ref: 
