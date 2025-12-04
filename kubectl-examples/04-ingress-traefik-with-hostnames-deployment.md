@@ -286,10 +286,10 @@ kubectl describe ingress example-ingress
 ```
 # Im Browser auf:
 # hier euer Name 
-http://jochen.lab.t3isp.de/apple
-http://jochen.lab.t3isp.de/apple/
-http://jochen.lab.t3isp.de/apple/foo 
-http://jochen.lab.t3isp.de/banana
+http://jochen.app.do.t3isp.de/apple
+http://jochen.app.do.t3isp.de/apple/
+http://jochen.app.do.t3isp.de/apple/foo 
+http://jochen.app.do.t3isp.de/banana
 # geht nicht 
-http://jochen.lab.t3isp.de/banana/nix
+http://jochen.app.do.t3isp.de/banana/nix
 ```
