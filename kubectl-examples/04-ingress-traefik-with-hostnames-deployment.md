@@ -178,7 +178,7 @@ kubectl explain ingress | head
 ```
 
 ```
-nano ingress.yaml
+nano ingress.yml
 ```
 
 ```
