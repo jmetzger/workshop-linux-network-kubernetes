@@ -94,7 +94,7 @@
      * [Permanente Weiterleitung mit Ingress](/kubectl-examples/05-ingress-permanent-redirect.md)
 
   1. Kubernetes Ingress (Traefik)
-
+     * [Ingress mit traefik](kubectl-examples/04-ingress-traefik-with-hostnames-deployment.md)
      * [ingress mit traefik, letsencrypt und cert-manager](/ingress/https-letsencrypt-ingress-traefik.md)
 
   1. Kubernetes Praxis (Stateful Sets)
