@@ -103,7 +103,8 @@ kubectl describe certificate example-tls
 # -> hier muss True bei READY drin stehen 
 kubectl get cert example-tls
 kubectl get secret example-tls
-# cr = certificaterequest 
+# cr = certificaterequest
+# falls es nicht geht. 
 kubectl get cr example-tls
 ```
 
