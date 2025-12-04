@@ -1,5 +1,11 @@
 # https - mit letsencrypt in ingress (traefik) 
 
+## Prerequisites 
+
+```
+ingress - example with with apple and banana deployment has been created already
+```
+
 ## Schritt 1: cert-manager installieren 
 
 ```
