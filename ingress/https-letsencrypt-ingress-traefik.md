@@ -96,11 +96,14 @@ kubectl apply -f .
 
 
 
-## Schritt 3: Herausfinden, ob Zertifikate erstellt werden 
+## Schritt 4: Herausfinden, ob Zertifikate erstellt werden 
 
 ```
 kubectl describe certificate example-tls
-kubectl get cert
+kubectl get cert example-tls
+kubectl get secret example-tls
+# cr = certificaterequest 
+kubectl get cr example-tls
 ```
 
 
