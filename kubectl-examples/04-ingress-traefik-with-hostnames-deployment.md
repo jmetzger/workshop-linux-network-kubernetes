@@ -139,9 +139,9 @@ metadata:
   annotations:
     ingress.kubernetes.io/rewrite-target: /
 spec:
-  ingressClassName: nginx
+  ingressClassName: traefik
   rules:
-  - host: "<euername>.lab.t3isp.de"
+  - host: "<euername>.app.do.t3isp.de"
     http:
       paths:
         - path: /apple
