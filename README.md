@@ -101,6 +101,9 @@
      * [Ingress mit traefik](kubectl-examples/04-ingress-traefik-with-hostnames-deployment.md)
      * [ingress mit traefik, letsencrypt und cert-manager](/ingress/https-letsencrypt-ingress-traefik.md)
 
+  1. Cert-Manager
+     * [Liste von dns resolvern](https://cert-manager.io/docs/configuration/acme/dns01/)
+
   1. Kubernetes Praxis (Stateful Sets)
      * [Hintergrund statefulsets](/kubernetes/statefulsets.md)
      * [Example stateful set](/kubectl-examples/10-statefulset.md)
