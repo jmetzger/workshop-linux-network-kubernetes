@@ -1,5 +1,12 @@
 # Komplettes Ansible CA-Deployment
 
+## 0. Installation (Vorbereitung) - Ubuntu 
+
+```
+apt update
+apt install ansible -y
+```
+
 ## 1. Verzeichnisstruktur erstellen
 
 ```bash
