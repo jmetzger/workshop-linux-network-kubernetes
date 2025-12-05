@@ -1,7 +1,39 @@
-# Kubernetes Einführung
+# Workshop Linux,Netzwerk und Kubernetes 
 
 
 ## Agenda
+  1. Linux Administration
+     * [Zeitzone setzen](#zeitzone-setzen)
+
+  1. Linux
+
+     * [MAC-Adressen/Layer2-Netzwerk/Broadcast-Domain](#mac-adressenlayer2-netzwerkbroadcast-domain)
+     * [Layer2-Netzwerk/Broadcast-Domain](#layer2-netzwerkbroadcast-domain)
+     * [Switches](#switches)
+     * Installation von Ubuntu 24.04 (auf virtual maschine) - mit ISO
+     * [arp (mit Übung)](#arp-mit-übung)
+     * [DNS-Server aufsetzen](#dns-server-aufsetzen)
+     * [dig verwenden](#dig-verwenden)
+    
+ 1. DHCP
+     * [DHCP](#dhcp)
+     * [DHCP-Server aufsetzen](#dhcp-server-aufsetzen)
+     * [DHCP - Reservations - hostname, hw-addr, ip](#dhcp---reservations---hostname-hw-addr-ip)
+     * [DHCP und DNS verheiraten](#dhcp-und-dns-verheiraten)
+
+  1. dotnet
+     * [.NET 8 (dotnet) unter Linux](#net-8-dotnet-unter-linux)
+
+  1. Root-CA-cert
+     * [Root-CA cert mit ansible ausrollen](#root-ca-cert-mit-ansible-ausrollen)
+
+  1. Linux Security
+     * [Firewall ingress und egress](#firewall-ingress-und-egress)
+
+  1. Pakete installieren
+     * [Apache2 installieren](#apache2-installieren)
+     * [ssh installieren](#ssh-installieren)
+
   1. Docker-Grundlagen 
      * [Übersicht Architektur](#übersicht-architektur)
      * [Was ist ein Container ?](#was-ist-ein-container-)
@@ -16,9 +48,12 @@
      * [Kubernetes Architektur Deep-Dive](https://github.com/jmetzger/training-kubernetes-advanced/assets/1933318/1ca0d174-f354-43b2-81cc-67af8498b56c)
      * [Ausbaustufen Kubernetes](#ausbaustufen-kubernetes)
      * [Wann macht Kubernetes Sinn, wann nicht?](#wann-macht-kubernetes-sinn-wann-nicht)
+
+  1. Kubernetes Installation
      * [Aufbau mit helm,OpenShift,Rancher(RKE),microk8s](#aufbau-mit-helmopenshiftrancherrkemicrok8s)
      * [Welches System ? (minikube, micro8ks etc.)](#welches-system--minikube-micro8ks-etc)
      * [Installer für grosse Cluster](#installer-für-grosse-cluster)
+     * [Installation mit kubespray (unter der Haube: kubeadm, ansible)](#installation-mit-kubespray-unter-der-haube-kubeadm-ansible)
      * [Installation - Welche Komponenten from scratch](#installation---welche-komponenten-from-scratch)
 
   1. Kubernetes - Überblick
@@ -47,8 +82,15 @@
      * Services (Devs/Ops)
      * [kubectl/manifest/service](#kubectlmanifestservice)
      * DaemonSets (Devs/Ops)
-     * IngressController (Devs/Ops)
+     * [ConfigMap Example](#configmap-example)
+     * [ConfigMap Example MariaDB](#configmap-example-mariadb)
+     * [Secrets Example MariaDB](#secrets-example-mariadb)
+     * [Connect to external database](#connect-to-external-database)
+
+  1. Kubernetes Ingress (Grundlagen)
      * [Hintergrund Ingress](#hintergrund-ingress)
+
+  1. Kubernetes Ingress (Nginx - deprecated)   
      * [Ingress Controller auf Digitalocean (doks) mit helm installieren](#ingress-controller-auf-digitalocean-doks-mit-helm-installieren)
      * [Documentation for default ingress nginx](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/)
      * [Beispiel Ingress](#beispiel-ingress)
@@ -56,10 +98,18 @@
      * [Beispiel Deployment mit Ingress und Hostnamen](#beispiel-deployment-mit-ingress-und-hostnamen)
      * [Achtung: Ingress mit Helm - annotations](#achtung-ingress-mit-helm---annotations)
      * [Permanente Weiterleitung mit Ingress](#permanente-weiterleitung-mit-ingress)
-     * [ConfigMap Example](#configmap-example)
-     * [ConfigMap Example MariaDB](#configmap-example-mariadb)
-     * [Secrets Example MariaDB](#secrets-example-mariadb)
-     * [Connect to external database](#connect-to-external-database)
+
+  1. Kubernetes Ingress (Traefik)
+     * [Install Traefik-IngressController](#install-traefik-ingresscontroller)
+     * [Ingress mit traefik](#ingress-mit-traefik)
+     * [ingress mit traefik, letsencrypt und cert-manager](#ingress-mit-traefik-letsencrypt-und-cert-manager)
+     * [Ingress mit Session Stickyness](#ingress-mit-session-stickyness)
+)
+  1. Cert-Manager
+     * [Liste von dns resolvern](https://cert-manager.io/docs/configuration/acme/dns01/)
+
+  1. Gateway API
+     * [Compability - Welche Anbieter unterstützten bereits was ?](https://github.com/kubernetes-sigs/gateway-api/blob/main/conformance)
 
   1. Kubernetes Praxis (Stateful Sets)
      * [Hintergrund statefulsets](#hintergrund-statefulsets)
@@ -420,6 +470,1208 @@
 
 <div class="page-break"></div>
 
+## Linux Administration
+
+### Zeitzone setzen
+
+
+```
+timedatectl
+timedatectl list-timzones
+timedatectl set-timezone "Europe/Berlin"
+```
+
+## Linux
+
+### MAC-Adressen/Layer2-Netzwerk/Broadcast-Domain
+
+
+### Allgemein 
+
+  * MAC-Adressen sollten in der Theorie weltweit eindeutig sein
+  * In der Praxis sind sie es nicht, weil dort teilweise MAC-Adresse selbständig vergeben werden, z.B. bei Virtualisierung
+  * Aber: In einem Layer2-Netzwerk, muss ! die MAC-Adresse eindeutig sein (es darf immer nur ein Rechner mit dieser MAC-Adresse antworten)
+
+### Aufbau von MAC-Adressen 
+
+MAC-Adressen (Media Access Control Adressen) sind **48-Bit-Adressen**, die Netzwerkgeräte auf **Layer 2** eindeutig identifizieren. Sie werden typischerweise vom Hersteller vergeben.
+
+---
+
+#### 🧱 **Grundaufbau**
+
+Eine MAC-Adresse besteht aus **6 Byte (48 Bit)** und wird meist hexadezimal geschrieben:
+
+```
+AA:BB:CC:DD:EE:FF
+```
+
+Jedes Paar (`AA`, `BB`, …) repräsentiert **1 Byte = 8 Bit**.
+
+---
+
+#### 🔍 **Zweiteilung der MAC-Adresse**
+
+##### **1️⃣ OUI (Organizationally Unique Identifier) – die ersten 3 Byte**
+
+* Vom **IEEE** vergeben
+* Identifiziert den **Hersteller**
+* Beispiel: `D4:6A:6A` = Apple, `00:1A:2B` = Cisco (nur Beispiele)
+
+##### **2️⃣ Geräte-spezifischer Teil – die letzten 3 Byte**
+
+* Vom Hersteller selbst vergeben
+* Jedes produzierte Gerät/Interface bekommt eine eindeutige Nummer
+
+---
+
+##### 🏷️ **Beispiel**
+
+MAC: `3C:5A:B4:12:34:56`
+
+* **3C:5A:B4** → Hersteller (OUI)
+* **12:34:56** → Gerät/Interface
+
+---
+
+###### 🔧 **Besondere Bits in der MAC-Adresse**
+
+Mehrere Bits haben besondere Bedeutung:
+
+####### **1. U/L-Bit (Universal/Local)**
+
+* Bit 1 im ersten Byte (Least Significant Bit der ersten Hex-Zahl "AA")
+* **0 = Universell** (vom Hersteller vergeben)
+* **1 = Lokal** (z. B. durch VM, Docker, WiFi-Spezialsoftware)
+
+Beispiel lokale MACs:
+
+```
+02:00:00:...
+06:... 
+```
+
+####### **2. I/G-Bit (Individual/Group)**
+
+* Bit 0 im ersten Byte
+* **0 = Unicast-Adresse**
+* **1 = Multicast-Adresse**
+
+Beispiel Multicast-MAC:
+
+```
+01:00:5E:xx:xx:xx   (IPv4 Multicast)
+33:33:xx:xx:xx:xx   (IPv6 Multicast)
+```
+
+---
+
+###### 🧠 Merksatz
+
+> MAC = **6 Byte**, erste Hälfte Hersteller, zweite Hälfte Gerät.
+> Bits im ersten Byte bestimmen *global vs. lokal* und *unicast vs. multicast*.
+
+---
+
+####### 📚 Bonus: Wie viele MAC-Adressen gibt es?
+
+48 Bit = **281.474.976.710.656 mögliche MACs** (~281 Billionen).
+
+---
+
+### Layer2-Netzwerk/Broadcast-Domain
+
+
+### Was ist ein Layer 2 - Netzwerk 
+
+  * Ein Layer-2-Netzwerk ist ein Netzwerksegment, in dem Geräte per MAC-Adresse kommunizieren und Switches die Weiterleitung übernehmen
+  * Sie teilen sich die gleiche Broadcast - Domain.
+
+```
+PC1 ----- Switch ----- PC2
+          |
+          +---- PC3
+```
+
+### Was ist ein Broadcast - Domain 
+
+```
+Eine Broadcast-Domain umfasst alle Geräte, die durch Layer-2 (Switch) miteinander verbunden sind und Broadcasts voneinander empfangen können.
+```
+
+### Was gehört in eine Broadcast-Domain?
+
+  * Alle Geräte am gleichen Switch, solange keine VLANs konfiguriert wurden
+  * Geräte an mehreren Switches, wenn sie in demselben VLAN liegen
+  * Geräte im gleichen Layer-2-Netz ohne Router dazwischen
+
+Ein Router trennt Broadcast-Domains – ein Switch nicht.
+
+### Switches
+
+
+### Hintergrund 
+
+  * Switches sind auf Layer 2 (Data-Layer) und merken sich nur MAC-Adressen
+  * Switches haben einen Mac-Adressen-Tabelle (Sie lernen dynamisch an welchem Port welche MAC-Adresse angeschlossen, erreichbar ist)
+
+
+```
+In diesem Szenario spielen die Switches eine wichtige Rolle bei der Weiterleitung der Pakete zwischen den Geräten, auch wenn sie an verschiedenen Switches angeschlossen sind. Hier ist der Ablauf:
+
+1. Angenommen, Gerät A (am Switch 1) möchte Gerät B (am Switch 2) anpingen. Gerät A sendet zunächst eine ARP-Anfrage als Broadcast an alle Geräte im lokalen Netzwerk.
+
+2. Switch 1 empfängt die ARP-Anfrage und leitet sie an alle seine Ports weiter, einschließlich des Ports, der mit Switch 2 verbunden ist.
+
+3. Switch 2 empfängt die ARP-Anfrage über den Uplink-Port von Switch 1 und leitet sie an alle seine Ports weiter, an denen Geräte angeschlossen sind.
+
+4. Gerät B empfängt die ARP-Anfrage und erkennt, dass es die gesuchte IP-Adresse hat. Es sendet eine ARP-Antwort zurück, die seine MAC-Adresse enthält.
+
+5. Switch 2 empfängt die ARP-Antwort und lernt, an welchem Port Gerät B angeschlossen ist. Dann leitet er die Antwort über den Uplink-Port zurück zu Switch 1.
+
+6. Switch 1 empfängt die ARP-Antwort und lernt, an welchem Port Gerät A angeschlossen ist. Dann leitet er die Antwort an Gerät A weiter.
+
+7. Gerät A empfängt die ARP-Antwort und speichert die IP-Adresse und die dazugehörige MAC-Adresse von Gerät B in seinem ARP-Cache.
+
+8. Jetzt kann Gerät A Pakete direkt an die MAC-Adresse von Gerät B senden. Die Switches leiten diese Pakete basierend auf ihren MAC-Adresstabellen weiter, die sie durch die ARP-Anfragen und -Antworten gelernt haben.
+
+Dieser Prozess ermöglicht die Kommunikation zwischen Geräten, auch wenn sie an verschiedenen Switches angeschlossen sind, solange die Switches miteinander verbunden sind. Die Switches lernen dynamisch, an welchen Ports die Geräte angeschlossen sind, indem sie den ARP-Verkehr beobachten.
+
+```
+
+### arp (mit Übung)
+
+
+### 🔧 1. Vorbereitung: Installation von `arping`
+
+Ubuntu 24.04 hat `arping` nicht standardmäßig installiert.
+Installiere es mit:
+
+```bash
+sudo apt update
+sudo apt install iputils-arping -y
+```
+
+Prüfen, ob es funktioniert:
+
+```bash
+arping -h
+```
+
+---
+
+### 📘 2. ARP-Cache anzeigen
+
+Der ARP-Cache enthält bekannte Zuordnungen von **IP-Adressen zu MAC-Adressen**.
+
+```bash
+ip neigh
+```
+
+Oder ausführlicher:
+
+```bash
+ip neigh show
+```
+
+👉 **Aufgabe:**
+
+* Finde die MAC-Adresse deines Gateways (Default-Gateway ermitteln):
+
+```bash
+ip route
+```
+
+---
+
+### 🧹 3. ARP-Cache löschen (Ubuntu 24.04)
+
+Seit Ubuntu 22.04+ funktioniert `ip -s -s neigh flush all`.
+
+**Gesamten ARP-Cache leeren:**
+
+```bash
+## -s -s zeigt: erweiterte Statistiken 
+sudo ip -s -s neigh flush all
+```
+
+Erneut prüfen:
+
+```bash
+ip neigh
+```
+
+👉 **Aufgabe:**
+
+* Leere den Cache
+* Überprüfe, dass er wirklich leer ist
+* Ping später eine Adresse an und beobachte, wie der Cache sich wieder füllt
+
+---
+
+### 📡 4. ARP-Anfragen mit `arping` durchführen
+
+Wähle ein Ziel im Netzwerk (z. B. das Gateway).
+
+#### 🔍 ARP-Request senden:
+
+```bash
+## das macht keinen eintrag im Cache
+## nur zum Testen
+arping -I <interface> <IP>
+## Das jedoch schon (eintrag erfolgt)
+wget <IP-Adresse>
+## z.B.
+wget 192.168.56.102
+ip neigh 
+```
+
+```
+## Hin -> Broadcast -> Wer hat die IP (bitte MAC-Addresse) 
+arping -I eth1 10.135.0.74
+## Zurück Unicast (1:1) -> Ich habe sie
+```
+
+<img width="898" height="167" alt="image" src="https://github.com/user-attachments/assets/32aeb45c-6232-4407-9459-d8ee8cee24c6" />
+
+Beispiel mit erkanntem Interface:
+
+1. Interface anzeigen:
+
+   ```bash
+   ip addr
+   ```
+
+2. `arping` senden (Beispiel, bitte `eth0` und IP ersetzen):
+
+   ```bash
+   sudo arping -I eth0 192.168.178.1
+   ```
+
+
+### DNS-Server aufsetzen
+
+
+  * Achtung, die Reihenfolge ist wichtig !
+
+### Schritt 1: Bind 9 installieren 
+
+```
+apt update
+apt install bind9 bind9utils bind9-doc
+systemctl status bind9 
+```
+
+
+
+### Step 2: Disable systemd-resolve  
+
+```
+systemctl disable systemd-resolved
+systemctl stop systemd-resolved
+## Delete symbolic Link 
+rm -fR /etc/resolv.conf
+```
+
+
+### Step 3: Change settings in /etc/bind/named.conf.options 
+
+```
+// google public dns-server
+forwarders {
+   8.8.8.8;
+   8.8.4.4;
+};
+
+listen-on { any; };
+
+// diese Zeile ändern dnssec-validation auto -> in
+dnssec-validation yes;
+```
+
+### Step 4: Edit /etc/resolv.conf
+
+
+```
+nameserver 127.0.0.1
+ping www.google.de
+```
+
+### Step 5: Restart named 
+
+```
+systemctl stop named
+hostnamectl set-hostname ns1.training.local 
+systemctl start named
+```
+
+### Step 6: Test with dig 
+
+```
+dig @localhost A www.google.de
+```
+
+### Step 7: Here are the logs 
+
+```
+journalctl -eu named
+```
+
+
+### Step 8: Setup a zone 
+
+```
+// Zone in der Datei /etc/bind/named.conf.local hinzufügen
+zone "training.local" {
+    type master;
+    file "/etc/bind/db.training.local";
+};
+```
+
+
+
+```
+; put into file /etc/bind/db.training.local 
+; base zone file for training.local
+$TTL 1h    ; default TTL for zone
+$ORIGIN training.local. ; base domain-name
+; Start of Authority RR defining the key characteristics of the zone (domain)
+@         IN      SOA   ns1.training.local. hostmaster.training.local. (
+                                2025120101 ; serial number
+                                12h        ; refresh
+                                15m        ; update retry
+                                3w         ; expiry
+                                2h         ; minimum
+                                )
+; name server RR for the domain
+           IN      NS      ns1.training.local.
+ns1        IN      A       192.168.56.101
+ubuntu22   IN      A       192.168.56.101
+```
+
+```
+systemctl restart named
+```
+
+```
+ping ubuntu22.training.local
+dig A ubuntu22.training.local
+```
+
+### dig verwenden
+
+## 🧪 **Übung: DNS-Abfragen mit `dig` (Beispiele mit google.com)**
+
+### 📌 **1. Installation von `dig` (dnsutils)**
+
+```bash
+sudo apt update
+sudo apt install -y dnsutils
+```
+
+---
+
+### 📘 **2. Die wichtigsten DNS-Record-Typen**
+
+* **A** → IPv4-Adresse eines Hosts
+* **AAAA** → IPv6-Adresse
+* **CNAME** → Alias-Eintrag
+* **MX** → Mailserver
+* **NS** → autoritative Nameserver
+* **TXT** → Textinformationen (SPF, Google-Site-Verification usw.)
+* **SOA** → Start of Authority (Zonen-Infos)
+* **PTR** → Reverse DNS Lookup (IP → Name)
+
+---
+
+### 🛠️ **3. Praktische Abfragen mit `dig`**
+
+#### 👉 **A-Record**
+
+```bash
+dig A google.com
+```
+
+#### 👉 **AAAA-Record (IPv6)**
+
+```bash
+dig AAAA google.com
+```
+
+#### 👉 **MX-Record (Mailserver)**
+
+```bash
+dig MX google.com
+```
+
+#### 👉 **CNAME-Record für www**
+
+```bash
+dig CNAME www.google.com
+```
+
+#### 👉 **Nameserver der Domain**
+
+```bash
+dig NS google.com
+```
+
+#### 👉 **TXT-Records (SPF, Google-Verifikation, etc.)**
+
+```bash
+dig TXT google.com
+```
+
+#### 👉 **SOA-Record**
+
+```bash
+dig SOA google.com
+```
+
+---
+
+### 🔍 **4. Reverse DNS Lookup (PTR) für Google DNS**
+
+```bash
+dig -x 8.8.8.8
+```
+
+---
+
+### 📄 **5. Vollständige, gut lesbare Antwort**
+
+```bash
+dig google.com any +multiline +answer
+```
+
+
+### DHCP
+
+
+Hier ist eine **klare, trainingsgeeignete Erklärung** für **DHCP Discover**, so wie du sie in einem Unterricht oder IT-Training einsetzen kannst – anschaulich, technisch korrekt und mit einem kleinen Ablaufdiagramm.
+
+---
+
+### 🧩 **Wie funktioniert DHCP Discover?**
+
+(DHCP Schritt 1 im DORA-Prozess)
+
+DHCP (Dynamic Host Configuration Protocol) sorgt dafür, dass ein Gerät automatisch eine **IP-Adresse**, **Gateway**, **DNS** usw. bekommt.
+
+Der Prozess besteht aus 4 Schritten:
+**D**iscover → **O**ffer → **R**equest → **A**ck
+
+Wir konzentrieren uns auf den ersten Schritt: **Discover**.
+
+---
+
+### 🚀 **Was macht „DHCP Discover“?**
+
+Wenn ein Gerät (z. B. Laptop) neu ins Netzwerk kommt, **kennt es seine IP noch nicht**.
+Also sendet es eine Nachricht ins Netzwerk:
+
+👉 *„Hallo, gibt es hier einen DHCP-Server, der mir eine IP geben kann?“*
+
+Diese Nachricht ist der **DHCP Discover**.
+
+---
+
+### 📢 **Wichtig: Es ist ein Layer-2-Broadcast**
+
+**DHCP Discover wird an alle Geräte im LAN ausgesendet**, weil der Client
+noch nicht weiß, wer der DHCP-Server ist.
+
+#### 🔹 Ziel-MAC-Adresse:
+
+```
+ff:ff:ff:ff:ff:ff
+```
+
+→ **Broadcast an alle**
+
+#### 🔹 Quell-MAC-Adresse:
+
+MAC-Adresse des Clients (z. B. seines LAN-Ports)
+
+#### 🔹 IP-Schicht:
+
+* Source IP: `0.0.0.0` (Client hat noch keine IP)
+* Destination IP: `255.255.255.255` (Broadcast)
+
+---
+
+### 🧠 **Warum Broadcast?**
+
+Weil der Client **nicht** weiß:
+
+* Welche IP der Server hat
+* Ob es überhaupt einen Server gibt
+* Wo sich im Netz ein Server befindet
+
+**Broadcast → Alle hören zu → DHCP-Server antwortet.**
+
+---
+
+### 🛜 **Was macht der Switch?**
+
+Ein Switch leitet Broadcasts **an alle Ports im gleichen Layer-2-Segment** weiter.
+(Das ist die sogenannte **Broadcast-Domain**.)
+
+Daher erreichen DHCP-Discover-Pakete alle Geräte im LAN.
+
+---
+
+### 📦 **DHCP Discover – Ablauf (vereinfacht)**
+
+---
+
+#### **1️⃣ Client startet**
+
+* Kein IP → benutzt `0.0.0.0`
+* Kennt den Server nicht
+
+#### **2️⃣ Client sendet: DHCPDISCOVER**
+
+* MAC → ff:ff:ff:ff:ff:ff (Broadcast)
+* IP → 255.255.255.255 (Broadcast)
+* UDP Port 68 → 67
+
+#### **3️⃣ Alle Geräte im LAN empfangen es**
+
+* Switch broadcastet an alle Ports
+* Nur der DHCP-Server reagiert
+
+#### **4️⃣ Server antwortet mit DHCPOFFER**
+
+Und dann kommen Schritt 2–4 (Offer → Request → Ack).
+
+---
+
+### 🧪 **Mini-Übung (ideal fürs Training)**
+
+#### **0. Vorbereitung**
+
+```bash
+sudo apt update
+
+## ARP / Netzwerk / DHCP / Sniffer Tools
+sudo apt install -y \
+  isc-dhcp-client \
+  tcpdump
+```
+
+#### **1. DHCP Traffic beobachten**
+
+```bash
+sudo tcpdump -i eth0 -n port 67 or port 68
+```
+
+Währenddessen:
+
+#### **2. DHCP erneuern**
+
+```bash
+sudo dhclient -r
+sudo dhclient
+```
+
+Achte auf:
+
+* DHCPDISCOVER
+* DHCPOFFER
+* DHCPREQUEST
+* DHCPACK
+
+---
+
+### 🧑‍🏫 Perfekte Kurz-Erklärung
+
+> **DHCP Discover ist die erste Nachricht eines Geräts ohne IP, um einen DHCP-Server zu finden.
+> Es wird als Broadcast an alle Geräte im LAN gesendet, weil der Client die IP des Servers noch nicht kennt.
+> DHCP arbeitet deshalb zu Beginn komplett mit Broadcasts, bis eine IP vergeben wurde.**
+
+---
+
+<img width="940" height="500" alt="image" src="https://github.com/user-attachments/assets/477bea19-408c-487b-8368-31ee66b6ed9e" />
+
+
+
+### DHCP-Server aufsetzen
+
+
+### Schritt 1: Ubuntu 22 Runterfahren 
+
+```
+... und 3. Netzwerkkarte einrichten
+Internal Network 
+```
+
+### Schritt 2: Ubuntu 22 wieder hochfahren 
+
+```
+## Netzwerk-Interface ausfindig machne
+ip a
+## -> enp0s9 
+```
+
+```
+## Anlegen _>
+## in /etc/netplan/70-config.yaml
+## statisch eintragen
+## 192.168.0.1
+network:
+  version: 2
+  ethernets:
+    enp0s9:
+      dhcp4: no
+## includes the subnet mask 
+      addresses:
+        - 192.168.0.1/24
+```
+
+```
+netplan try
+netplan apply 
+```
+
+### Schritt3: dhcp laufen installieren 
+
+```
+apt update
+apt install kea # Nachfolger von isc-dhcp-server 
+systemctl status kea-dhcp4-server
+```
+
+```
+mv /etc/kea/kea-dhcp4.conf /etc/kea/kea-dhcp4.conf.bkup
+```
+
+
+```
+nano /etc/kea/kea-dhcp4.conf 
+```
+
+```
+## Config anpassen
+{
+  "Dhcp4": {
+    "interfaces-config": {
+      "interfaces": [ "enp0s9" ]
+    },
+    "subnet4": [
+      {
+        "pools": [ { "pool":  "192.168.0.10 - 192.168.0.20" } ],
+        "subnet": "192.168.0.0/24"
+      }
+    ]
+  }
+}
+```
+
+```
+systemctl restart kea-dhcp4-server 
+systemctl status kea-dhcp4-server 
+journalctl -eu kea-dhcp4-server
+```
+
+
+### 2. Maschine (ubuntu 24.04) hochziehen auch mit internal net
+
+#### Schritt 1: runterfahren 
+
+```
+poweroff
+```
+
+#### Schritt 2: 3. Netwerk-Interface Internal Net einrichten 
+
+
+
+
+#### Schritt 3: Hochfahren und /etc/netplan einrichten aber mit dhcp 
+
+  * für Interface enp0s9
+
+```
+nano /etc/netplan/70-config.yaml
+```
+
+```
+network:
+  version: 2
+  ethernets:
+    enp0s9:
+      dhcp4: true
+```
+
+```
+chmod 600 70-config.yaml 
+netplan try
+```
+
+```
+## hat ip-adresse bekommen 
+ip a
+```
+
+```
+## DHCP-Maschine anpingen 
+ping 192.168.0.1 
+```
+
+### DHCP - Reservations - hostname, hw-addr, ip
+
+
+### Eintrag erfolgt in der /etc/kea/kea-dhcp4.conf 
+
+
+
+```
+// Diese an die Datei anfügen 
+"reservations": [
+    {
+        "hw-address": "01:02:03:04:05:06",
+
+        "ip-addresses": [
+            "192.168.0.10"
+        ],
+        "hostname": "foo.example.com"
+    }
+]
+```
+
+### DHCP und DNS verheiraten
+
+
+### Stichwort in KEA 
+
+  * DHCP-DDNS Server
+  * https://kea.readthedocs.io/en/kea-2.2.0/arm/ddns.html
+
+### Reservierung pro MAC (muss erstellt werden) 
+
+```
+"reservations": [{
+  "hw-address": "00:11:22:33:44:55",
+  "hostname": "myhost"
+}]
+```
+
+### Walkthrough 
+
+Hier die wesentlichen Schritte für KEA DDNS mit BIND 9:
+
+#### 1. TSIG-Key generieren
+```bash
+tsig-keygen -a hmac-sha256 ddns-key > /etc/bind/ddns.key
+```
+
+#### 2. BIND 9 konfigurieren (`named.conf`)
+```
+include "/etc/bind/ddns.key";
+
+zone "example.com" {
+    type master;
+    file "/var/lib/bind/example.com.zone";
+    update-policy {
+        grant ddns-key zonesub any;
+    };
+};
+```
+
+#### 3. KEA DHCP-DDNS Daemon (`kea-dhcp-ddns.conf`)
+```json
+{
+  "DhcpDdns": {
+    "ip-address": "127.0.0.1",
+    "port": 53001,
+    "forward-ddns": {
+      "ddns-domains": [{
+        "name": "example.com.",
+        "key-name": "ddns-key",
+        "dns-servers": [{
+          "ip-address": "127.0.0.1",
+          "port": 53
+        }]
+      }]
+    },
+    "tsig-keys": [{
+      "name": "ddns-key",
+      "algorithm": "hmac-sha256",
+      "secret": "<base64-secret-aus-ddns.key>"
+    }]
+  }
+}
+```
+
+#### 4. KEA DHCPv4 aktivieren (`kea-dhcp4.conf`)
+```json
+{
+  "Dhcp4": {
+    "dhcp-ddns": {
+      "enable-updates": true
+    },
+    "ddns-qualifying-suffix": "example.com"
+  }
+}
+```
+
+#### 5. Services starten
+```bash
+systemctl start kea-dhcp-ddns
+systemctl start kea-dhcp4
+systemctl restart bind9
+```
+
+Wichtig: Zone-Datei muss für BIND schreibbar sein und TSIG-Secret muss identisch sein.
+
+
+
+
+## dotnet
+
+### .NET 8 (dotnet) unter Linux
+
+
+  * Dotnet 8 kann am besten über den Paket-Manager installiert werden
+
+```
+sudo apt search dotnet8
+sudo apt search dotnet-runtime-8.0
+```
+
+```
+sudo apt install dotnet-runtime-8.0 -y
+## zum Kompilieren brauche ich noch die sdk 
+sudo apt install dotnet-sdk-8.0 -y
+```
+
+ * Es werden noch ein Reihen von Abhängigkeiten installiert
+
+### Now dowload an sample and compile it (run it)
+
+  * In addition it will also create an executable 
+
+```
+## This takes a while 
+cd
+git clone https://github.com/dotnet/samples.git
+cd ~/samples/csharp/getting-started/console-webapiclient
+dotnet run 
+```
+
+## Root-CA-cert
+
+### Root-CA cert mit ansible ausrollen
+
+
+### 0. Installation (Vorbereitung) - Ubuntu 
+
+```
+apt update
+apt install ansible -y
+```
+
+### 1. Verzeichnisstruktur erstellen
+
+```bash
+mkdir -p ansible-ca-deployment/{inventory,playbooks,files}
+cd ansible-ca-deployment
+```
+
+### 2. Dateien erstellen
+
+**ansible.cfg:**
+```ini
+[defaults]
+inventory = inventory/hosts
+host_key_checking = False
+
+[privilege_escalation]
+become = True
+become_method = sudo
+```
+
+**inventory/hosts:**
+```ini
+[webservers]
+web-ubuntu01.firma.local ansible_host=192.168.1.10
+web-ubuntu02.firma.local ansible_host=192.168.1.11
+
+[databases]
+db-centos01.firma.local ansible_host=192.168.1.20
+db-rocky01.firma.local ansible_host=192.168.1.21
+
+[all:vars]
+ansible_user=admin
+ansible_ssh_private_key_file=~/.ssh/id_rsa
+```
+
+**playbooks/deploy-ca.yml:**
+```yaml
+---
+- name: Deploy CA certificate to all servers
+  hosts: all
+  become: yes
+  
+  vars:
+    ca_paths:
+      Debian: /usr/local/share/ca-certificates/
+      RedHat: /etc/pki/ca-trust/source/anchors/
+    ca_commands:
+      Debian: update-ca-certificates
+      RedHat: update-ca-trust
+  
+  tasks:
+    - name: Detect OS family
+      debug:
+        msg: "OS Family: {{ ansible_os_family }}"
+    
+    - name: Copy CA certificate
+      copy:
+        src: firma-ca.crt
+        dest: "{{ ca_paths[ansible_os_family] }}firma-ca.crt"
+        owner: root
+        group: root
+        mode: '0644'
+    
+    - name: Update CA trust store
+      command: "{{ ca_commands[ansible_os_family] }}"
+      register: ca_update
+    
+    - name: Show update result
+      debug:
+        msg: "{{ ca_update.stdout_lines }}"
+```
+
+**files/firma-ca.crt:**
+```bash
+## CA-Zertifikat hierhin kopieren
+cp /pfad/zu/deiner/ca.crt files/firma-ca.crt
+```
+
+### 3. Verzeichnisstruktur prüfen
+
+```bash
+tree
+```
+
+```
+ansible-ca-deployment/
+├── ansible.cfg
+├── inventory/
+│   └── hosts
+├── files/
+│   └── firma-ca.crt
+└── playbooks/
+    └── deploy-ca.yml
+```
+
+### 4. Ausführen
+
+**Test-Modus (Dry-Run):**
+```bash
+ansible-playbook playbooks/deploy-ca.yml --check
+```
+
+**Verbindung testen:**
+```bash
+ansible all -m ping
+```
+
+**CA verteilen:**
+```bash
+## Alle Server
+ansible-playbook playbooks/deploy-ca.yml
+
+## Mit Ausgabe
+ansible-playbook playbooks/deploy-ca.yml -v
+```
+
+### 5. Verifizieren
+
+```bash
+## Trust Store auf Server prüfen
+ansible all -m shell -a "ls -la /usr/local/share/ca-certificates/ || ls -la /etc/pki/ca-trust/source/anchors/"
+
+## Zertifikat testen
+ansible all -m shell -a "curl https://internal-server.firma.local"
+```
+
+### Ausgabe-Beispiel
+
+```
+PLAY [Deploy CA certificate to all servers] **************************
+
+TASK [Detect OS family] ***********************************************
+ok: [web-ubuntu01.firma.local] => {
+    "msg": "OS Family: Debian"
+}
+ok: [db-centos01.firma.local] => {
+    "msg": "OS Family: RedHat"
+}
+
+TASK [Copy CA certificate] ********************************************
+changed: [web-ubuntu01.firma.local]
+changed: [db-centos01.firma.local]
+
+TASK [Update CA trust store] ******************************************
+changed: [web-ubuntu01.firma.local]
+changed: [db-centos01.firma.local]
+
+PLAY RECAP ************************************************************
+web-ubuntu01.firma.local   : ok=4    changed=2
+db-centos01.firma.local    : ok=4    changed=2
+```
+
+
+## Linux Security
+
+### Firewall ingress und egress
+
+ 
+### Schritt 1: Installieren und nur eingehenden Traffic filtern 
+
+```
+systemctl status firewalld 
+apt search ^firewalld 
+apt install firewalld -y 
+systemctl status firewalld 
+
+firewall-cmd --state 
+## Was ist Betrieb für die Zone 
+firewall-cmd --list-all 
+firewall-cmd --get-active-zones 
+
+## Interfacd zu der Zone hinzufügen 
+firewall-cmd --zone=public --add-interface=enp0s8
+## jetzt in der public zone 
+firewall-cmd --get-active-zones 
+
+firewall-cmd --runtime-to-permanent 
+
+firewall-cmd --list-all 
+## Alle Services 
+firewall-cmd --get-services 
+## 
+firewall-cmd --info-service=http 
+
+### service http freischalten 
+firewall-cmd --add-service=http 
+
+firewall-cmd --runtime-to-permanent 
+```
+
+
+
+### Schritt 2: Eingehenden und ausgehenden Traffik konfigurieren 
+
+```
+## Alles auf Anfang // nur wenn interface vorher gewechselt wurde 
+firewall-cmd --zone=public --change-interface=enp0s8
+firewall-cmd --zone=public --change-interface=enp0s8 --permanent 
+```
+
+```
+firewall-cmd --direct --add-rule ipv4 filter OUTPUT 0 -m state --state ESTABLISHED,RELATED -j ACCEPT
+## Low priority for deny, will get processed as last resort (99)
+firewall-cmd --direct --add-rule ipv4 filter OUTPUT 99 -j DROP
+```
+
+```
+curl -I http://www.google.de
+```
+
+```
+firewall-cmd --direct --add-rule ipv4 filter OUTPUT 1 -p tcp -m tcp --dport 80 -j ACCEPT
+## geht auch ohne -m tcp
+firewall-cmd --direct --add-rule ipv4 filter OUTPUT 1 -p tcp --dport 80 -j ACCEPT
+firewall-cmd --direct --add-rule ipv4 filter OUTPUT 1 -p tcp --dport 443 -j ACCEPT
+```
+
+```
+curl -I http://www.google.de 
+```
+
+```
+firewall-cmd --direct --add-rule ipv4 filter OUTPUT 1 -p tcp -m tcp --dport 53 -j ACCEPT
+firewall-cmd --direct --add-rule ipv4 filter OUTPUT 1 -p udp --dport 53 -j ACCEPT
+```
+
+```
+curl -I http://www.google.de
+```
+
+
+```
+## alle Regeln anzeigen lassen
+firewall-cmd --list-all
+firewall-cmd --get-all-rules --direct 
+```
+
+```
+## Regeln permanent setzen
+firewall-cmd --runtime-to-permanent 
+```
+
+
+```
+## Regeln löschen
+## Schritt 1: direkte Regeln anzeigen
+firewall-cmd --get-all-rules --direct
+## Dann Zeile rauskopieren und 
+## firewall-cmd --direct --remove-rule davor schreiben
+## z.B.
+firewall-cmd --direct --remove-rule ipv4 filter OUTPUT 1 -p tcp -m tcp --dport 80 -j ACCEPT
+```
+
+### Schritt 4: Logging aktivieren 
+
+```
+## geht nur für eingehenden Traffic 
+firewall-cmd --get-log-denied
+firewall-cmd --set-log-denied=all
+journalctl -k | grep -i "REJECT"
+```
+
+```
+## Logging für ausgehende Regeln VOR allgemeiner Deny Regel 
+firewall-cmd --direct --add-rule ipv4 filter OUTPUT 98 -j LOG --log-prefix="[DROP]"
+## Regeln auslösen
+telnet 192.168.56.102 22 
+
+journalctl -k | grep "DROP"
+```
+
+
+
+#### Ref:
+
+  * https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/7/html/security_guide/configuring_logging_for_denied_packets
+
+## Pakete installieren
+
+### Apache2 installieren
+
+
+```
+apt update 
+## Sucht nach Vorkommen am Anfang der Zeile 
+apt search ^apache2 
+apt install apache2 -y 
+
+systemctl status apache2.service
+```
+
+### ssh installieren
+
+
+```
+apt install openssh-server -y 
+systemctl start ssh
+systemctl enable ssh
+```
+
 ## Docker-Grundlagen 
 
 ### Übersicht Architektur
@@ -666,6 +1918,8 @@ Er stellt sicher, dass Container in einem Pod ausgeführt werden.
 
 
 
+## Kubernetes Installation
+
 ### Aufbau mit helm,OpenShift,Rancher(RKE),microk8s
 
 
@@ -696,7 +1950,11 @@ So there are other tools/distri around helping you with that.
 
 #### Disadvantages 
 
-  * Zusatzkomponenten (bspw. metallb - LoadBalancer)  sind oftmals etwas schwieriger instalieren ( inkl. microk8s enable )
+  * Am komplexesten für die Installation
+
+#### Vorteil 
+
+  * Sehr flexibel 
 
 ### microk8s 
 
@@ -804,7 +2062,7 @@ it is not suitable for production.
 #### Schritt 2: Kubernetes ausrollen 
 
     * Ansible (leichter bestimmte zu Konfigurieren) 
-    * kubeadmin 
+    * kubeadm
 
 ### Proxmox 
 
@@ -821,6 +2079,54 @@ it is not suitable for production.
 
 
  
+
+### Installation mit kubespray (unter der Haube: kubeadm, ansible)
+
+
+  * Also auf Basis von ansible und kubeadm 
+
+### Single-Node 
+
+```
+[all]
+node1 ansible_host=192.168.1.10
+
+[kube_control_plane]
+node1
+
+[kube_node]
+node1
+
+[etcd]
+node1
+```
+
+#### Cluster erweitern 
+
+```
+[all]
+node1 ansible_host=192.168.1.10
+node2 ansible_host=192.168.1.11  # neu
+node3 ansible_host=192.168.1.12  # neu
+
+[kube_control_plane]
+node1
+
+[kube_node]
+node1
+node2  # neu
+node3  # neu
+
+[etcd]
+node1
+```
+
+```
+ansible-playbook -i inventory/mycluster/inventory.ini \
+  scale.yml \
+  --limit=node2,node3
+```
+
 
 ### Installation - Welche Komponenten from scratch
 
@@ -1071,6 +2377,8 @@ kubectl create ns <euername>
 kubectl get ns
 kubectl config set-context --current --namespace <euername>
 kubectl get pods
+## Optional
+kubectl config view 
 ```
 
 
@@ -1369,6 +2677,10 @@ kubectl get pod/nginx-static-web -o yaml
 
 ```
 
+```
+kubectl delete -f nginx-static.yml
+```
+
 ### kubectl/manifest/replicaset
 
 
@@ -1447,6 +2759,12 @@ kubectl apply -f .
 kubectl get pods
 ```
 
+### Aufräumen 
+
+```
+kubectl delete -f .
+```
+
 ### kubectl/manifest/deployments
 
 
@@ -1479,9 +2797,9 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: nginx:1.22
+        image: nginxinc/nginx-unprivileged:1.28
         ports:
-        - containerPort: 80
+        - containerPort: 8080
         
 ```
 
@@ -1498,6 +2816,7 @@ kubectl get all
 ### Optional: Change image - Version 
 
 ```
+## Ändern des images von nginx:1.28 in nginx:1.29
 nano nginx-deployment.yml 
 ```
 
@@ -1505,7 +2824,7 @@ nano nginx-deployment.yml
 #### Version 1: (optical nicer)
 
 ```
-## Ändern des images von nginx:1.22 in nginx:1.23
+
 ## danach 
 kubectl apply -f . && watch kubectl get pods 
 ```
@@ -1780,6 +3099,483 @@ spec:
 
   * https://kubernetes.io/docs/concepts/services-networking/connect-applications-service/
 
+### ConfigMap Example
+
+
+### Schritt 1: configmap vorbereiten 
+```
+cd 
+mkdir -p manifests 
+cd manifests
+mkdir configmaptests 
+cd configmaptests
+nano 01-configmap.yml
+```
+
+```
+### 01-configmap.yml
+kind: ConfigMap 
+apiVersion: v1 
+metadata:
+  name: example-configmap 
+data:
+  # als Wertepaare
+  database: mongodb
+  database_uri: mongodb://localhost:27017
+  testdata: |
+     run=true
+     file=/hello/you 
+```
+
+```
+kubectl apply -f 01-configmap.yml 
+kubectl get cm
+kubectl get cm example-configmap -o yaml
+```
+
+### Schritt 2: Beispiel als Datei 
+
+
+```
+nano 02-pod.yml
+```
+
+```
+kind: Pod 
+apiVersion: v1 
+metadata:
+  name: pod-mit-configmap 
+
+spec:
+  # Add the ConfigMap as a volume to the Pod
+  volumes:
+    # `name` here must match the name
+    # specified in the volume mount
+    - name: example-configmap-volume
+      # Populate the volume with config map data
+      configMap:
+        # `name` here must match the name 
+        # specified in the ConfigMap's YAML 
+        name: example-configmap
+
+  containers:
+    - name: container-configmap
+      image: nginx:latest
+      # Mount the volume that contains the configuration data 
+      # into your container filesystem
+      volumeMounts:
+        # `name` here must match the name
+        # from the volumes section of this pod
+        - name: example-configmap-volume
+          mountPath: /etc/config
+
+```
+
+```
+kubectl apply -f 02-pod.yml 
+```
+
+```
+##Jetzt schauen wir uns den Container/Pod mal an
+kubectl exec pod-mit-configmap -- ls -la /etc/config
+kubectl exec -it pod-mit-configmap --  bash
+## ls -la /etc/config 
+```
+
+### Schritt 3: Beispiel. ConfigMap als env-variablen 
+
+```
+nano 03-pod-mit-env.yml
+```
+
+```
+## 03-pod-mit-env.yml 
+kind: Pod 
+apiVersion: v1 
+metadata:
+  name: pod-env-var 
+spec:
+  containers:
+    - name: env-var-configmap
+      image: nginx:latest 
+      envFrom:
+        - configMapRef:
+            name: example-configmap
+
+```
+
+```
+kubectl apply -f 03-pod-mit-env.yml
+```
+
+```
+## und wir schauen uns das an 
+##Jetzt schauen wir uns den Container/Pod mal an
+kubectl exec pod-env-var -- env
+kubectl exec -it pod-env-var --  bash
+## env
+
+```
+
+
+### Reference: 
+
+ * https://matthewpalmer.net/kubernetes-app-developer/articles/ultimate-configmap-guide-kubernetes.html
+
+### ConfigMap Example MariaDB
+
+
+### Schritt 1: configmap 
+
+```
+cd 
+mkdir -p manifests
+cd manifests
+mkdir cftest 
+cd cftest 
+nano 01-configmap.yml 
+```
+
+```
+### 01-configmap.yml
+kind: ConfigMap 
+apiVersion: v1 
+metadata:
+  name: mariadb-configmap 
+data:
+  # als Wertepaare
+  MARIADB_ROOT_PASSWORD: 11abc432
+  TEST_CASE: "47"
+```
+
+```
+kubectl apply -f .
+kubectl describe cm  mariadb-configmap
+kubectl get cm
+kubectl get cm mariadb-configmap -o yaml
+```
+
+
+### Schritt 2: Deployment 
+```
+nano 02-deploy.yml
+```
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mariadb-deployment
+spec:
+  selector:
+    matchLabels:
+      app: mariadb
+  replicas: 1 
+  template:
+    metadata:
+      labels:
+        app: mariadb
+    spec:
+      containers:
+      - name: mariadb-cont
+        image: mariadb:10.11
+        envFrom:
+        - configMapRef:
+            name: mariadb-configmap
+
+```
+
+```
+kubectl apply -f .
+kubectl get pods 
+kubectl exec -it deploy/mariadb-deployment -- bash 
+```
+
+```
+env
+env | grep ROOT
+env | grep TEST
+exit
+```
+
+### Schritt 3: Service for mariadb 
+
+```
+nano 03-service.yml 
+```
+
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: mariadb
+spec:
+  type: ClusterIP
+  ports:
+  - port: 3306
+    protocol: TCP
+  selector:
+    app: mariadb
+```
+
+```
+kubectl apply -f 03-service.yml 
+```
+
+### Schritt 4: client aufsetzen 
+
+```
+nano 04-client.yml 
+```
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mariadb-client
+spec:
+  selector:
+    matchLabels:
+      app: ubuntu
+  replicas: 1 # tells deployment to run 2 pods matching the template
+  template: # create pods using pod definition in this template
+    metadata:
+      labels:
+        app: ubuntu
+    spec:
+      containers:
+      - name: service
+        image: ubuntu
+        command: [ "/bin/sh" , "-c", "tail -f /dev/null" ]
+        envFrom:
+        - configMapRef:
+            name: mariadb-configmap
+```
+
+```
+kubectl apply -f 04-client.yml 
+```
+
+
+
+```
+## im client 
+kubectl exec -it deploy/mariadb-client -- bash 
+apt update; apt install -y mariadb-client iputils-ping
+```
+
+### Schritt 5: mysql-zugang von aussen erstellen 
+
+```
+kubectl exec -it deploy/mariadb-deployment -- bash
+```
+
+```
+mysql -uroot -p$MARIADB_ROOT_PASSWORD
+```
+
+```
+## innerhalb von mysql 
+create user ext@'%' identified by '11abc432';
+grant all on *.* to ext@'%';
+
+```
+
+### Schritt 6: mysql von client aus testen 
+
+```
+kubectl exec -it deploy/mariadb-client -- bash
+```
+
+```
+mysql -uext -p$MARIADB_ROOT_PASSWORD -h mariadb
+```
+
+```
+show databases;
+```
+
+### Important Sidenode 
+
+  * If configmap changes, deployment does not know
+  * So kubectl apply -f deploy.yml will not have any effect
+  * to fix, use stakater/reloader: https://github.com/stakater/Reloader
+
+
+### Secrets Example MariaDB
+
+
+### Schritt 1: secret  
+
+```
+cd 
+mkdir -p manifests
+cd manifests
+mkdir secrettest
+cd secrettest 
+```
+
+```
+kubectl create secret generic mariadb-secret --from-literal=MARIADB_ROOT_PASSWORD=11abc432 --dry-run=client -o yaml > 01-secrets.yml
+```
+
+```
+kubectl apply -f .
+kubectl get secrets 
+kubectl get secrets  mariadb-secret  -o yaml
+```
+
+
+### Schritt 2: Deployment 
+```
+nano 02-deploy.yml
+```
+
+```
+##deploy.yml 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mariadb-deployment
+spec:
+  selector:
+    matchLabels:
+      app: mariadb
+  replicas: 1 
+  template:
+    metadata:
+      labels:
+        app: mariadb
+    spec:
+      containers:
+      - name: mariadb-cont
+        image: mariadb:latest
+        envFrom:
+        - secretRef:
+            name: mariadb-secret
+
+```
+
+```
+kubectl apply -f .
+```
+
+### Testing 
+
+```
+## Führt den Befehl env in einem Pod des Deployments aus  
+kubectl exec deployment/mariadb-deployment -- env
+## eigentlich macht er das:
+## kubectl exec mariadb-deployment-c6df6f959-q6swp -- env
+```
+
+
+### Important Sidenode 
+
+  * If configmap changes, deployment does not know
+  * So kubectl apply -f deploy.yml will not have any effect
+  * to fix, use stakater/reloader: https://github.com/stakater/Relo
+
+### Connect to external database
+
+
+### Prerequisites 
+
+  * MariaDB - Server is running on digitalocean in same network as doks (kubernetes) - cluster (10.135.0.x) 
+  * DNS-Entry for mariadb-server.t3isp.de -> pointing to private ip: 10.135.0.9
+
+### Variante 1:
+
+#### Schritt 1: Service erstellen 
+
+```
+cd 
+mkdir -p manifests
+cd manifests
+mkdir 05-external-db 
+cd 05-external-db 
+nano 01-external-db.yml
+```
+
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: dbexternal
+spec:
+  type: ExternalName
+  externalName: mariadb-server.t3isp.de
+```
+
+```
+kubectl apply -f 01-external-db.yml 
+```
+
+#### Schritt 2: configmap anlegen oder ergänzen 
+
+```
+## Ergänzen 
+## unter data zwei weitere Zeile 
+### 01-configmap.yml
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: mariadb-configmap
+data:
+  # als Wertepaare
+  MARIADB_ROOT_PASSWORD: 11abc432
+  DB_USER: ext
+  DB_PASS: 11dortmund22
+```
+
+```
+kubectl apply -f 01-configmap.yml  
+```
+
+```
+## client deployment gelöscht 
+kubectl delete -f 04-client.yml
+kubectl apply -f 04-client.yml 
+kubectl exec -it deploy/mariadb-client -- bash 
+```
+
+```
+## Im client 
+apt update; apt install -y mariadb-client iputils-ping 
+```
+
+
+#### Schritt 3: Service testen 
+
+```
+kubectl exec -it deploy/mariadb-client -- bash
+```
+
+```
+## im container verbinden mit mysql 
+mysql -u$DB_USER -p$DB_PASS -h dbexternal
+```
+
+```
+## im verbundenen MySQL-Client 
+show databases;
+```
+
+
+### Variante 2:
+
+```
+cd 
+mkdir -p manifests
+cd manifests
+mkdir 05-external-db 
+cd 05-external-db 
+nano 02-external-endpoint.yml
+```
+
+
+## Kubernetes Ingress (Grundlagen)
+
 ### Hintergrund Ingress
 
 
@@ -1788,6 +3584,8 @@ spec:
 ### Ref. / Dokumentation 
 
   * https://matthewpalmer.net/kubernetes-app-developer/articles/kubernetes-ingress-guide-nginx-example.html
+
+## Kubernetes Ingress (Nginx - deprecated)   
 
 ### Ingress Controller auf Digitalocean (doks) mit helm installieren
 
@@ -2694,480 +4492,449 @@ This annotation allows to return a permanent redirect instead of sending data to
   * https://github.com/kubernetes/ingress-nginx/blob/main/docs/user-guide/nginx-configuration/annotations.md#permanent-redirect
   * 
 
-### ConfigMap Example
+## Kubernetes Ingress (Traefik)
+
+### Install Traefik-IngressController
 
 
-### Schritt 1: configmap vorbereiten 
 ```
-cd 
+helm repo add traefik https://traefik.github.io/charts
+
+helm upgrade -n ingress --install traefik traefik/traefik --version 37.4.0 --create-namespace --skip-crds --reset-values
+
+## Use special crds helm chart instead, because it does not deploy crds for gateway-api by default
+## We get an error on digitalocean doks
+helm -n ingress upgrade install traefik-crds traefik/traefik-crds --version 1.12.0 --reset-values 
+```
+
+### Ingress mit traefik
+
+
+### Step 1: Walkthrough 
+
+```
+cd
 mkdir -p manifests 
 cd manifests
-mkdir configmaptests 
-cd configmaptests
-nano 01-configmap.yml
+mkdir abi 
+cd abi
 ```
 
 ```
-### 01-configmap.yml
-kind: ConfigMap 
-apiVersion: v1 
-metadata:
-  name: example-configmap 
-data:
-  # als Wertepaare
-  database: mongodb
-  database_uri: mongodb://localhost:27017
-  testdata: |
-     run=true
-     file=/hello/you 
-```
-
-```
-kubectl apply -f 01-configmap.yml 
-kubectl get cm
-kubectl get cm example-configmap -o yaml
-```
-
-### Schritt 2: Beispiel als Datei 
-
-
-```
-nano 02-pod.yml
-```
-
-```
-kind: Pod 
-apiVersion: v1 
-metadata:
-  name: pod-mit-configmap 
-
-spec:
-  # Add the ConfigMap as a volume to the Pod
-  volumes:
-    # `name` here must match the name
-    # specified in the volume mount
-    - name: example-configmap-volume
-      # Populate the volume with config map data
-      configMap:
-        # `name` here must match the name 
-        # specified in the ConfigMap's YAML 
-        name: example-configmap
-
-  containers:
-    - name: container-configmap
-      image: nginx:latest
-      # Mount the volume that contains the configuration data 
-      # into your container filesystem
-      volumeMounts:
-        # `name` here must match the name
-        # from the volumes section of this pod
-        - name: example-configmap-volume
-          mountPath: /etc/config
-
-```
-
-```
-kubectl apply -f 02-pod.yml 
-```
-
-```
-##Jetzt schauen wir uns den Container/Pod mal an
-kubectl exec pod-mit-configmap -- ls -la /etc/config
-kubectl exec -it pod-mit-configmap --  bash
-## ls -la /etc/config 
-```
-
-### Schritt 3: Beispiel. ConfigMap als env-variablen 
-
-```
-nano 03-pod-mit-env.yml
-```
-
-```
-## 03-pod-mit-env.yml 
-kind: Pod 
-apiVersion: v1 
-metadata:
-  name: pod-env-var 
-spec:
-  containers:
-    - name: env-var-configmap
-      image: nginx:latest 
-      envFrom:
-        - configMapRef:
-            name: example-configmap
-
-```
-
-```
-kubectl apply -f 03-pod-mit-env.yml
-```
-
-```
-## und wir schauen uns das an 
-##Jetzt schauen wir uns den Container/Pod mal an
-kubectl exec pod-env-var -- env
-kubectl exec -it pod-env-var --  bash
-## env
-
-```
-
-
-### Reference: 
-
- * https://matthewpalmer.net/kubernetes-app-developer/articles/ultimate-configmap-guide-kubernetes.html
-
-### ConfigMap Example MariaDB
-
-
-### Schritt 1: configmap 
-
-```
-cd 
-mkdir -p manifests
-cd manifests
-mkdir cftest 
-cd cftest 
-nano 01-configmap.yml 
-```
-
-```
-### 01-configmap.yml
-kind: ConfigMap 
-apiVersion: v1 
-metadata:
-  name: mariadb-configmap 
-data:
-  # als Wertepaare
-  MARIADB_ROOT_PASSWORD: 11abc432
-  TEST_CASE: "47"
-```
-
-```
-kubectl apply -f .
-kubectl describe cm  mariadb-configmap
-kubectl get cm
-kubectl get cm mariadb-configmap -o yaml
-```
-
-
-### Schritt 2: Deployment 
-```
-nano 02-deploy.yml
+nano apple-deploy.yml 
 ```
 
 ```
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mariadb-deployment
+  name: apple-app
+  labels:
+    app: apple
 spec:
+  replicas: 1
   selector:
     matchLabels:
-      app: mariadb
-  replicas: 1 
+      app: apple
   template:
     metadata:
       labels:
-        app: mariadb
+        app: apple
     spec:
       containers:
-      - name: mariadb-cont
-        image: mariadb:10.11
-        envFrom:
-        - configMapRef:
-            name: mariadb-configmap
-
+        - name: apple-app
+          image: hashicorp/http-echo
+          args:
+            - "-text=apple-<euer-name>"
 ```
 
 ```
-kubectl apply -f .
-kubectl get pods 
-kubectl exec -it deploy/mariadb-deployment -- bash 
+nano apple-svc.yaml
 ```
 
-```
-env
-env | grep ROOT
-env | grep TEST
-exit
-```
-
-### Schritt 3: Service for mariadb 
 
 ```
-nano 03-service.yml 
-```
-
-```
-apiVersion: v1
 kind: Service
+apiVersion: v1
 metadata:
-  name: mariadb
+  name: apple-service
 spec:
   type: ClusterIP
+  selector:
+    app: apple
   ports:
-  - port: 3306
-    protocol: TCP
-  selector:
-    app: mariadb
-```
-
-```
-kubectl apply -f 03-service.yml 
-```
-
-### Schritt 4: client aufsetzen 
-
-```
-nano 04-client.yml 
-```
-
-```
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: mariadb-client
-spec:
-  selector:
-    matchLabels:
-      app: ubuntu
-  replicas: 1 # tells deployment to run 2 pods matching the template
-  template: # create pods using pod definition in this template
-    metadata:
-      labels:
-        app: ubuntu
-    spec:
-      containers:
-      - name: service
-        image: ubuntu
-        command: [ "/bin/sh" , "-c", "tail -f /dev/null" ]
-        envFrom:
-        - configMapRef:
-            name: mariadb-configmap
-```
-
-```
-kubectl apply -f 04-client.yml 
-```
-
-
-
-```
-## im client 
-kubectl exec -it deploy/mariadb-client -- bash 
-apt update; apt install -y mariadb-client iputils-ping
-```
-
-### Schritt 5: mysql-zugang von aussen erstellen 
-
-```
-kubectl exec -it deploy/mariadb-deployment -- bash
-```
-
-```
-mysql -uroot -p$MARIADB_ROOT_PASSWORD
-```
-
-```
-## innerhalb von mysql 
-create user ext@'%' identified by '11abc432';
-grant all on *.* to ext@'%';
-
-```
-
-### Schritt 6: mysql von client aus testen 
-
-```
-kubectl exec -it deploy/mariadb-client -- bash
-```
-
-```
-mysql -uext -p$MARIADB_ROOT_PASSWORD -h mariadb
-```
-
-```
-show databases;
-```
-
-### Important Sidenode 
-
-  * If configmap changes, deployment does not know
-  * So kubectl apply -f deploy.yml will not have any effect
-  * to fix, use stakater/reloader: https://github.com/stakater/Reloader
-
-
-### Secrets Example MariaDB
-
-
-### Schritt 1: secret  
-
-```
-cd 
-mkdir -p manifests
-cd manifests
-mkdir secrettest
-cd secrettest 
-```
-
-```
-kubectl create secret generic mariadb-secret --from-literal=MARIADB_ROOT_PASSWORD=11abc432 --dry-run=client -o yaml > 01-secrets.yml
+    - protocol: TCP
+      port: 80
+      targetPort: 5678 # Default port for image
 ```
 
 ```
 kubectl apply -f .
-kubectl get secrets 
-kubectl get secrets  mariadb-secret  -o yaml
-```
-
-
-### Schritt 2: Deployment 
-```
-nano 02-deploy.yml
 ```
 
 ```
-##deploy.yml 
+nano banana-deploy.yml
+```
+
+```
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mariadb-deployment
+  name: banana-app
+  labels:
+    app: banana
 spec:
+  replicas: 1
   selector:
     matchLabels:
-      app: mariadb
-  replicas: 1 
+      app: banana
   template:
     metadata:
       labels:
-        app: mariadb
+        app: banana
     spec:
       containers:
-      - name: mariadb-cont
-        image: mariadb:latest
-        envFrom:
-        - secretRef:
-            name: mariadb-secret
+        - name: apple-app
+          image: hashicorp/http-echo
+          args:
+            - "-text=banana-<euer-name>"
+```
 
+```
+nano banana-svc.yaml
+```
+
+```
+kind: Service
+apiVersion: v1
+metadata:
+  name: banana-service
+spec:
+  type: ClusterIP
+  selector:
+    app: banana
+  ports:
+    - port: 80
+      targetPort: 5678 # Default port for image
 ```
 
 ```
 kubectl apply -f .
 ```
 
-### Testing 
+### Step 2: Testing connection by podIP and Service 
 
 ```
-## Führt den Befehl env in einem Pod des Deployments aus  
-kubectl exec deployment/mariadb-deployment -- env
-## eigentlich macht er das:
-## kubectl exec mariadb-deployment-c6df6f959-q6swp -- env
+kubectl get svc
+kubectl get pods -o wide
+kubectl run podtest --rm -it --image busybox
+```
+
+```
+/ # wget -O - http://<pod-ip>:5678 
+/ # wget -O - http://<cluster-ip>
+```
+
+### Step 3: Walkthrough 
+
+```
+nano ingress.yml
+```
+
+```
+## Ingress
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: example-ingress
+  annotations:
+    ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: traefik
+  rules:
+  - host: "<euername>.app.do.t3isp.de"
+    http:
+      paths:
+        - path: /apple
+          backend:
+            serviceName: apple-service
+            servicePort: 80
+        - path: /banana
+          backend:
+            serviceName: banana-service
+            servicePort: 80
+```
+
+```
+## ingress 
+kubectl apply -f ingress.yml
+```
+
+### Reference 
+
+  * https://matthewpalmer.net/kubernetes-app-developer/articles/kubernetes-ingress-guide-nginx-example.html
+
+### Step 4: Find the problem 
+
+#### Fix 4.1: Fehler: no matches kind "Ingress" in version "extensions/v1beta1"
+
+```
+## Gibt es diese Landkarte überhaupt
+kubectl api-versions
+## auf welcher Landkarte/Gruppe befindet sich Ingress jetzt 
+kubectl explain ingress | head
+## -> jetzt auf networking.k8s.io/v1 
+
+```
+
+```
+nano ingress.yml
+```
+
+```
+## auf apiVersion: extensions/v1beta1
+## wird -> networking.k8s.io/v1
+```
+
+```
+kubectl apply -f .
+```
+
+#### Fix 4.2: Bad Request unkown field ServiceName / ServicePort 
+
+
+```
+## was geht für die Property backend 
+kubectl explain ingress.spec.rules.http.paths.backend
+## und was geht für service
+kubectl explain ingress.spec.rules.http.paths.backend.service
+```
+
+```
+nano ingress.yml
+```
+
+```
+## Wir ersetzen 
+## serviceName: apple-service 
+## durch:
+## service: 
+##   name: apple-service 
+
+## das gleiche für banana 
+```
+
+```
+kubectl apply -f . 
 ```
 
 
-### Important Sidenode 
+### Fix 4.3. BadRequest unknown field servicePort
 
-  * If configmap changes, deployment does not know
-  * So kubectl apply -f deploy.yml will not have any effect
-  * to fix, use stakater/reloader: https://github.com/stakater/Relo
+```
+## was geht für die Property backend 
+kubectl explain ingress.spec.rules.http.paths.backend
+## und was geht für service
+kubectl explain ingress.spec.rules.http.paths.backend.service.port
+## number 
+kubectl explain ingress.spec.rules.http.paths.backend.service.port
+```
 
-### Connect to external database
+```
+## neue Variante sieht so aus
+backend:
+  service:
+    name: apple-service
+    port:
+      number: 80
+## das gleich für banana-service
+```
+
+```
+kubectl apply -f .
+```
+
+
+### Fix 4.4. pathType must be specificied 
+
+```
+## Was macht das ?
+kubectl explain ingress.spec.rules.http.paths.pathType
+```
+
+```
+      paths:
+        - path: /apple
+          pathType: Prefix
+          backend:
+            service:
+              name: apple-service
+              port:
+                number: 80
+        - path: /banana
+          pathType: Exact 
+          backend:
+            service:
+              name: banana-service
+              port:
+                number: 80                
+```
+
+```
+kubectl apply -f .
+kubectl get ingress example-ingress
+```
+
+
+### Step 5: Testing 
+
+```
+## mit describe herausfinden, ob er die services gefundet 
+kubectl describe ingress example-ingress
+```
+
+```
+## Im Browser auf:
+## hier euer Name 
+http://jochen.app.do.t3isp.de/apple
+http://jochen.app.do.t3isp.de/apple/
+http://jochen.app.do.t3isp.de/apple/foo 
+http://jochen.app.do.t3isp.de/banana
+## geht nicht 
+http://jochen.app.do.t3isp.de/banana/nix
+```
+
+### ingress mit traefik, letsencrypt und cert-manager
 
 
 ### Prerequisites 
 
-  * MariaDB - Server is running on digitalocean in same network as doks (kubernetes) - cluster (10.135.0.x) 
-  * DNS-Entry for mariadb-server.t3isp.de -> pointing to private ip: 10.135.0.9
-
-### Variante 1:
-
-#### Schritt 1: Service erstellen 
-
 ```
-cd 
-mkdir -p manifests
-cd manifests
-mkdir 05-external-db 
-cd 05-external-db 
-nano 01-external-db.yml
+ingress - example with with apple and banana deployment has been created already
 ```
 
+### Schritt 1: cert-manager installieren 
+
 ```
-apiVersion: v1
-kind: Service
+helm repo add jetstack https://charts.jetstack.io
+helm install cert-manager jetstack/cert-manager \
+--namespace cert-manager --create-namespace \
+--version v1.12.0 \
+--set installCRDs=true
+```
+
+### Schritt 2: Create ClusterIssuer (gets certificates from Letsencrypt)
+
+```
+## cluster-issuer.yaml
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
 metadata:
-  name: dbexternal
+  name: letsencrypt-prod
 spec:
-  type: ExternalName
-  externalName: mariadb-server.t3isp.de
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: your-email@example.com
+    privateKeySecretRef:
+      name: letsencrypt-prod
+    solvers:
+    - http01:
+        ingress:
+          class: traefik
 ```
 
 ```
-kubectl apply -f 01-external-db.yml 
+kubectl get clusterissuer letsencrypt-prod
+kubectl describe clusterissuer letsencrypt-prod 
 ```
 
-#### Schritt 2: configmap anlegen oder ergänzen 
+### Schritt 3: Ingress-Objekt mit TLS erstellen 
 
 ```
-## Ergänzen 
-## unter data zwei weitere Zeile 
-### 01-configmap.yml
-kind: ConfigMap
-apiVersion: v1
+cd
+mkdir -p manifests/abi
+cd manifests/abi
+## falls datei schon da ist 
+mv ingress.yaml ingress.yaml.bkup 
+nano ingress-tls.yaml 
+```
+
+```
+## Ingress
+apiVersion: networking.k8s.io/v1
+kind: Ingress
 metadata:
-  name: mariadb-configmap
-data:
-  # als Wertepaare
-  MARIADB_ROOT_PASSWORD: 11abc432
-  DB_USER: ext
-  DB_PASS: 11dortmund22
+  name: example-ingress
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: traefik
+  tls:
+  - hosts:
+    - <euer-name>.app.do.t3isp.de
+    secretName: example-tls
+  rules:
+  - host: "<euer-name>.app.do.t3isp.de"
+    http:
+      paths:
+        - path: /apple
+          pathType: Prefix
+          backend:
+            service:
+              name: apple-service
+              port:
+                number: 80
+        - path: /banana
+          pathType: Exact
+          backend:
+            service:
+              name: banana-service
+              port:
+                number: 80
 ```
 
 ```
-kubectl apply -f 01-configmap.yml  
-```
-
-```
-## client deployment gelöscht 
-kubectl delete -f 04-client.yml
-kubectl apply -f 04-client.yml 
-kubectl exec -it deploy/mariadb-client -- bash 
-```
-
-```
-## Im client 
-apt update; apt install -y mariadb-client iputils-ping 
+kubectl apply -f .
 ```
 
 
-#### Schritt 3: Service testen 
-
-```
-kubectl exec -it deploy/mariadb-client -- bash
-```
-
-```
-## im container verbinden mit mysql 
-mysql -u$DB_USER -p$DB_PASS -h dbexternal
-```
-
-```
-## im verbundenen MySQL-Client 
-show databases;
-```
 
 
-### Variante 2:
+
+
+### Schritt 4: Herausfinden, ob Zertifikate erstellt werden 
 
 ```
-cd 
-mkdir -p manifests
-cd manifests
-mkdir 05-external-db 
-cd 05-external-db 
-nano 02-external-endpoint.yml
+kubectl describe certificate example-tls
+## -> hier muss True bei READY drin stehen 
+kubectl get cert example-tls
+kubectl get secret example-tls
+## cr = certificaterequest
+## falls es nicht geht. 
+kubectl get cr example-tls
 ```
 
+
+
+
+### Ref: 
+
+  * https://hbayraktar.medium.com/installing-cert-manager-and-nginx-ingress-with-lets-encrypt-on-kubernetes-fe0dff4b1924
+
+### Ingress mit Session Stickyness
+
+## Cert-Manager
+
+### Liste von dns resolvern
+
+  * https://cert-manager.io/docs/configuration/acme/dns01/
+
+## Gateway API
+
+### Compability - Welche Anbieter unterstützten bereits was ?
+
+  * https://github.com/kubernetes-sigs/gateway-api/blob/main/conformance
 
 ## Kubernetes Praxis (Stateful Sets)
 
@@ -3383,11 +5150,8 @@ ping web-0.nginx
 ### Schritt 1: Walkthrough - Client Installation (als root)
 
 ```
-## Binary für Linux runterladen, entpacken und installieren 
-## Achtung: Immer die neueste Version von den Releases nehmen, siehe unten:
-## Install as root 
-curl -OL "https://github.com/bitnami-labs/sealed-secrets/releases/download/v0.29.0/kubeseal-0.29.0-linux-amd64.tar.gz"
-tar -xvzf kubeseal-0.29.0-linux-amd64.tar.gz kubeseal
+curl -OL "https://github.com/bitnami-labs/sealed-secrets/releases/download/v0.33.1/kubeseal-0.33.1-linux-amd64.tar.gz"
+tar -xvzf kubeseal-0.33.1-linux-amd64.tar.gz kubeseal
 sudo install -m 755 kubeseal /usr/local/bin/kubeseal
 ```
 
@@ -3395,65 +5159,17 @@ sudo install -m 755 kubeseal /usr/local/bin/kubeseal
 
 ```
 helm repo add bitnami-labs https://bitnami-labs.github.io/sealed-secrets/
-helm install sealed-secrets --namespace kube-system bitnami-labs/sealed-secrets --version 2.17.2
-
+helm install sealed-secrets --namespace kube-system bitnami-labs/sealed-secrets --version 2.17.9
 ```
 
 ### Schritt 3: Walkthrough - Verwendung (als normaler/unpriviligierter Nutzer)
 
 ```
-kubeseal --fetch-cert 
-
-## Secret - config erstellen mit dry-run, wird nicht auf Server angewendet (nicht an Kube-Api-Server geschickt) 
-kubectl -n default create secret generic basic-auth --from-literal=user=admin --from-literal=password=change-me --dry-run=client -o yaml > basic-auth.yaml
-cat basic-auth.yaml 
-
-## öffentlichen Schlüssel zum Signieren holen 
-kubeseal --fetch-cert > pub-sealed-secrets.pem
-cat pub-sealed-secrets.pem 
-
-kubeseal --format=yaml --cert=pub-sealed-secrets.pem < basic-auth.yaml > basic-auth-sealed.yaml
-cat basic-auth-sealed.yaml 
-
-## Ausgangsfile von dry-run löschen 
-rm basic-auth.yaml
-
-## Ist das secret basic-auth vorher da ? 
-kubectl get secrets basic-auth 
-
-kubectl apply -f basic-auth-sealed.yaml
-
-## Kurz danach erstellt der Controller aus dem sealed secret das secret 
-kubectl get secret 
-kubectl get secret -o yaml
-
+Übung ist hier zu finden:
 ```
 
-```
-## Ich kann dieses jetzt ganz normal in meinem pod verwenden.
-## Step 3: setup another pod to use it in addition 
-## vi 02-secret-app.yml 
-apiVersion: v1    
-kind: Pod    
-metadata:    
-  name: secret-app    
-spec:    
-  containers:    
-    - name: env-ref-demo    
-      image: nginx    
-      envFrom:                                                                                                                              
-      - secretRef:
-          name: basic-auth
+[Beispiel mit kubeseal arbeiten](#exercise-sealed-secret-mariadb)
 
-
-```
-
-### Hinweis: Ubuntu snaps 
-
-```
-Installation über snap funktioniert nur, wenn ich auf meinem Client
-ausschliesslich als root arbeite 
-```
 
 ### Wie kann man sicherstellen, dass nach der automatischen Änderung des Secretes, der Pod bzw. Deployment neu gestartet wird ?
 
@@ -3476,6 +5192,7 @@ ausschliesslich als root arbeite
 
 ```
 cd
+mkdir -p manifests/secrettest
 cd manifests/secrettest
 ```
 
@@ -4214,11 +5931,11 @@ The main difference relies on the moment when you want to configure storage. For
   * Step 1 + 2 : nur Trainer
   * ab Step 3: Trainees 
 
-### Step 1: Do the same with helm - chart 
+### Step 1: Install with helm 
 
 ```
 helm repo add csi-driver-nfs https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/charts
-helm install csi-driver-nfs csi-driver-nfs/csi-driver-nfs --namespace kube-system --version v4.11.0
+helm install csi-driver-nfs csi-driver-nfs/csi-driver-nfs --namespace kube-system --version 4.12.1
 ```
 
 ### Step 2: Storage Class 
@@ -4239,7 +5956,7 @@ metadata:
   name: nfs-csi
 provisioner: nfs.csi.k8s.io
 parameters:
-  server: 10.135.0.70
+  server: 10.135.0.73
   share: /var/nfs
 reclaimPolicy: Retain
 volumeBindingMode: Immediate
@@ -6718,10 +8435,12 @@ ein einfaches Interface, um einen ersten Eindruck über die Auslastung zu bekomm
 
 ```
 helm repo add metrics-server https://kubernetes-sigs.github.io/metrics-server/
-helm -n kube-system upgrade --install metrics-server metrics-server/metrics-server --version 3.12.2
+helm -n kube-system upgrade --install metrics-server metrics-server/metrics-server --version 3.13.0
+```
 
 
 
+```
 ## Es dauert jetzt einen Moment bis dieser aktiv ist auch nach der Installation 
 ## Auf dem Client
 kubectl top nodes 
@@ -9834,7 +11553,11 @@ So there are other tools/distri around helping you with that.
 
 #### Disadvantages 
 
-  * Zusatzkomponenten (bspw. metallb - LoadBalancer)  sind oftmals etwas schwieriger instalieren ( inkl. microk8s enable )
+  * Am komplexesten für die Installation
+
+#### Vorteil 
+
+  * Sehr flexibel 
 
 ### microk8s 
 
@@ -10515,6 +12238,10 @@ kubectl get pod/nginx-static-web -o yaml
 
 ```
 
+```
+kubectl delete -f nginx-static.yml
+```
+
 ### kubectl/manifest/replicaset
 
 
@@ -10593,6 +12320,12 @@ kubectl apply -f .
 kubectl get pods
 ```
 
+### Aufräumen 
+
+```
+kubectl delete -f .
+```
+
 ### kubectl/manifest/deployments
 
 
@@ -10625,9 +12358,9 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: nginx:1.22
+        image: nginxinc/nginx-unprivileged:1.28
         ports:
-        - containerPort: 80
+        - containerPort: 8080
         
 ```
 
@@ -10644,6 +12377,7 @@ kubectl get all
 ### Optional: Change image - Version 
 
 ```
+## Ändern des images von nginx:1.28 in nginx:1.29
 nano nginx-deployment.yml 
 ```
 
@@ -10651,7 +12385,7 @@ nano nginx-deployment.yml
 #### Version 1: (optical nicer)
 
 ```
-## Ändern des images von nginx:1.22 in nginx:1.23
+
 ## danach 
 kubectl apply -f . && watch kubectl get pods 
 ```
@@ -13369,10 +15103,12 @@ ein einfaches Interface, um einen ersten Eindruck über die Auslastung zu bekomm
 
 ```
 helm repo add metrics-server https://kubernetes-sigs.github.io/metrics-server/
-helm -n kube-system upgrade --install metrics-server metrics-server/metrics-server --version 3.12.2
+helm -n kube-system upgrade --install metrics-server metrics-server/metrics-server --version 3.13.0
+```
 
 
 
+```
 ## Es dauert jetzt einen Moment bis dieser aktiv ist auch nach der Installation 
 ## Auf dem Client
 kubectl top nodes 
