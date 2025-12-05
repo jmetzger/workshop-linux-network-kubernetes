@@ -48,9 +48,12 @@
      * [Kubernetes Architektur Deep-Dive](https://github.com/jmetzger/training-kubernetes-advanced/assets/1933318/1ca0d174-f354-43b2-81cc-67af8498b56c)
      * [Ausbaustufen Kubernetes](installer/kubernetes-ausbaustufen.md)
      * [Wann macht Kubernetes Sinn, wann nicht?](/kubernetes/wann-sinnvoll-wann-nicht.md)   
+
+  1. Kubernetes Installation
      * [Aufbau mit helm,OpenShift,Rancher(RKE),microk8s](/kubernetes/aufbau-helm-microk8s-kubernetes.md)
      * [Welches System ? (minikube, micro8ks etc.)](welches-system.md)
      * [Installer für grosse Cluster](/kubernetes/grosse-installation-installer.md)
+     * [Installation mit kubespray (unter der Haube: kubeadm, ansible)](kubespray/overview.md)
      * [Installation - Welche Komponenten from scratch](/kubernetes/installation-components-overview.md)
 
   1. Kubernetes - Überblick
