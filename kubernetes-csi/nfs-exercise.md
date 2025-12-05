@@ -3,7 +3,7 @@
   * Step 1 + 2 : nur Trainer
   * ab Step 3: Trainees 
 
-## Step 1: Do the same with helm - chart 
+## Step 1: Install with helm 
 
 ```
 helm repo add csi-driver-nfs https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/charts
