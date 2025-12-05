@@ -2,6 +2,9 @@
 
 ## Agenda 
 
+  1. Aufzeichnungen
+     * [Aufzeichnungen aus yopad](aufzeichnungen.md)
+
   1. Linux Administration
      * [Zeitzone setzen](linux/timedatectl.md)
 
