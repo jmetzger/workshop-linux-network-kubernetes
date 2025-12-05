@@ -8,6 +8,7 @@
 
 ```
 cd
+mkdir -p manifests/secrettest
 cd manifests/secrettest
 ```
 
