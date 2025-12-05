@@ -100,7 +100,8 @@
      * [Install Traefik-IngressController](/ingress/traefik/install-with-helm.md)
      * [Ingress mit traefik](kubectl-examples/04-ingress-traefik-with-hostnames-deployment.md)
      * [ingress mit traefik, letsencrypt und cert-manager](/ingress/https-letsencrypt-ingress-traefik.md)
-
+     * [Ingress mit Session Stickyness](/ingress/traefik/session-stickyness.md
+)
   1. Cert-Manager
      * [Liste von dns resolvern](https://cert-manager.io/docs/configuration/acme/dns01/)
 
