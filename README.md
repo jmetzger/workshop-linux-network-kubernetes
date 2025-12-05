@@ -2,7 +2,6 @@
 
 ## Agenda 
 
-
   1. Linux Administration
      * [Zeitzone setzen](linux/timedatectl.md)
 
