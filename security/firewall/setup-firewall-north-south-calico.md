@@ -46,12 +46,23 @@ Calico bringt eigene Konzepte für Node-Security mit:
 * Können **automatisch** erstellt werden.
 * Sie repräsentieren die Netzwerk-Interfaces der Nodes.
 
-### **GlobalNetworkPolicies**
+```
+# So erstellt ihr sie automatisch, wenn ihr mit kubeadm installiert habt
+# Die kubecontrollerconfig wird automatisch angelegt, sobald tigera ausgerollt wurde
+kubectl patch kubecontrollersconfiguration default --patch='{"spec": {"controllers": {"node": {"hostEndpoint": {"autoCreate": "Enabled"}}}}}'
 
-* Gelten normalerweise **innerhalb des Clusters**.
-* In Kombination mit HostEndpoints wirken sie auch auf **Ports außerhalb des Cluster-Netzwerks** – also direkt auf Node-Level.
+# Wenn ich das entsprechend ändere, erstellt calico automatisch hostendpoints die wir für die weiteren Schritte brauchen
+kubectl get hep
+```
 
----
+<img width="695" height="185" alt="image" src="https://github.com/user-attachments/assets/7f4c77bd-f78c-4380-bb64-75f7d45d46bf" />
+
+```
+# Wichtig:
+# Achtet auf das Profil: Es läßt erstmal alles durch
+kubectl get hep -o yaml
+kubectl get profile projectcalico-default-allow -o yaml 
+```
 
 ## **Wichtiges Verhalten der Calico HostEndpoints**
 
@@ -65,8 +76,12 @@ Sobald eine **GlobalNetworkPolicy** existiert, deren Labels auf einen HostEndpoi
 Failsafe-Regeln:
 [https://docs.tigera.io/calico/latest/reference/host-endpoints/failsafe](https://docs.tigera.io/calico/latest/reference/host-endpoints/failsafe)
 
----
 
+### **GlobalNetworkPolicies**
+
+* Gelten normalerweise **innerhalb des Clusters**.
+* In Kombination mit HostEndpoints wirken sie auch auf direkt auf Node-Level (also auf Traffik von aussen)
+* 
 ## **Default-Verhalten**
 
 Bevor ihr eigene Policies definiert, lassen die HostEndpoints alles durch,
@@ -93,8 +108,3 @@ Ihr könnt das hier Schritt für Schritt durcharbeiten:
 
 👉 [https://www.tigera.io/blog/securing-kubernetes-nodes-with-calico-automatic-host-endpoints/](https://www.tigera.io/blog/securing-kubernetes-nodes-with-calico-automatic-host-endpoints/)
 
-Ich schreibe das alles auch hier noch einmal zusammen.
-
----
-
-Wenn du möchtest, kann ich das Markdown auch erweitern, z. B. mit Code-Beispielen, Diagrammen oder Schritt-für-Schritt-Anleitungen.
