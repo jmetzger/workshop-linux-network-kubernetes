@@ -138,6 +138,9 @@
   1. Security
      * [ServiceLinks nicht in env in Pod einbinden](security/service-nicht-einhaengen-in-pod.md)
 
+  1. Security - Firewall
+     * [Calio North-South Firewall - Absichern von aussen](/security/firewall/setup-firewall-north-south-calico.md)
+ 
   1. Helm (Kubernetes Paketmanager)
      * [Helm - Was kann Helm](helm/was-kann-helm.md)
      * [Helm Spickzettel](/helm/spickzettel.md)
