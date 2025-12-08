@@ -1,68 +1,100 @@
 # Firewall für North/South (Kubernetes Cluster) on-premise 
 
-## Bevorzugt: Firewall vor Kubernetes 
+## **Wichtiger Hinweis**
 
-  * Wenn ich das Glück habe, dass eine Firewall vor dem Kubernetes Cluster zur Verfügung steht, ist der beste Weg diese zu verwenden
-  * Diese ist immer der Fall bei den Cloud Providern und von Fall-zu-Fall auch on-prem beim Kunden
+**Bitte verwendet nicht direkt *firewalld* oder *iptables*.**
 
-## Keine weitere Firwewall davor ? (Wie gehen wir vor):
+---
 
-  * Neben dem Workload im Kubernetes Cluster wollen wir auch den eigehenden Traffic auf Kubernetes-fremden Ports beschränken (bspw. Firewall)
-  * Direkt mit iptables oder firewalld zu arbeiten sollten wir vermeiden, um nicht mit Kubernetes ins Gehege zu kommen.
-  * Das Mittel der Wahl sind
+## **Szenario 1: Cloud**
 
-## Hintergründe Firewall (Network Policies u.a.) des CNI-Providers 
+Hier nutzt ihr **immer die vorgeschaltete Firewall des Cloud-Providers**.
 
-   * Jeder CNI - Provider ist zwar verpflichtet die NetworkPolicy von Kubernetes zu unterstützen, bringt aber auch seine eigenen Ressourcen (CRD's mit)
-   * Hier gilt es nachzuschauen, ob es etwas auf der Host-Ebene gibt, dass wir verwenden können
+---
 
-## Konkretes Beispiel mit Calico 
+## **Szenario 2: On-Prem ohne vorgeschaltete Firewall**
 
-  * Achtung: Aktuell ungetestet
+*(Ich muss dazu sagen, dass ich keine Kosten und Mühen gescheut habe …
+Spaß 😉 … letzteres stimmt tatsächlich.)*
+
+Ich habe ein Cluster mit **kubeadm** und **Calico** hochgefahren – und was soll ich sagen, es hat eben nicht sofort funktioniert.
+
+---
+
+## **Grundsatz**
+
+**Verwendet immer die Firewall des CNI-Providers.**
+
+### Was bedeutet das?
+
+Wie ihr wisst, muss das Netzwerk in Kubernetes irgendwie gebaut werden.
+Kubernetes macht das **nicht selbst**, sondern lässt es durch ein CNI-Plugin erledigen.
+Stichwort: **CNI (Container Network Interface)**.
+
+Der CNI-Provider unterstützt meistens auch **Kubernetes NetworkPolicies**, stellt aber **eigene Ressourcen** bereit, um Firewall-Themen zu managen.
+
+→ **Schaut also immer nach, wie euer CNI-Provider das macht und was er anbietet.**
+
+---
+
+## **Beispiel: Calico**
+
+Calico bringt eigene Konzepte für Node-Security mit:
+
+### **HostEndpoints**
+
+* Können **automatisch** erstellt werden.
+* Sie repräsentieren die Netzwerk-Interfaces der Nodes.
+
+### **GlobalNetworkPolicies**
+
+* Gelten normalerweise **innerhalb des Clusters**.
+* In Kombination mit HostEndpoints wirken sie auch auf **Ports außerhalb des Cluster-Netzwerks** – also direkt auf Node-Level.
+
+---
+
+## **Wichtiges Verhalten der Calico HostEndpoints**
+
+Sobald eine **GlobalNetworkPolicy** existiert, deren Labels auf einen HostEndpoint matchen:
+
+* **Blockiert Calico alles**, was
+
+  * nicht explizit erlaubt ist **UND**
+  * nicht in den **Failsafe Rules** steht.
+
+Failsafe-Regeln:
+[https://docs.tigera.io/calico/latest/reference/host-endpoints/failsafe](https://docs.tigera.io/calico/latest/reference/host-endpoints/failsafe)
+
+---
+
+## **Default-Verhalten**
+
+Bevor ihr eigene Policies definiert, lassen die HostEndpoints alles durch,
+denn das Profil:
 
 ```
-cd
-mkdir -p manifests/firewall-calico
-cd manifests/firewall-calico
+projectcalico-default-allow
 ```
 
-```
-nano 01-host.yml
-```
+ist aktiv.
 
-```
-# Zunächst werden die Eintiegspunkte festgelegt
-# Interface wird hier ausserdem festgelegt
-# Node verweist auf den Namen des nodes 
-apiVersion: projectcalico.org/v3
-kind: HostEndpoint
-metadata:
-  name: node-1-eth0
-  labels:
-    role: worker
-spec:
-  node: worker-1
-  interfaceName: eth0  # Physisches Interface
-```
+---
 
-```
-nano 02-policy.yml
-```
+## **Verifikation**
 
-```
-apiVersion: projectcalico.org/v3
-kind: GlobalNetworkPolicy
-metadata:
-  name: block-ssh
-spec:
-  selector: role == 'worker'  # Matcht HostEndpoint Labels
-  ingress:
-  - action: Deny
-    protocol: TCP
-    destination:
-      ports: [22]
-```
+Ich habe das getestet – und **es funktioniert genau so**.
+Das war mir wichtig, damit wir es wirklich sicher wissen.
 
-```
-kubectl apply -f .
-```
+---
+
+## **Weiterführende Anleitung**
+
+Ihr könnt das hier Schritt für Schritt durcharbeiten:
+
+👉 [https://www.tigera.io/blog/securing-kubernetes-nodes-with-calico-automatic-host-endpoints/](https://www.tigera.io/blog/securing-kubernetes-nodes-with-calico-automatic-host-endpoints/)
+
+Ich schreibe das alles auch hier noch einmal zusammen.
+
+---
+
+Wenn du möchtest, kann ich das Markdown auch erweitern, z. B. mit Code-Beispielen, Diagrammen oder Schritt-für-Schritt-Anleitungen.
