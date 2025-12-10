@@ -93,7 +93,7 @@
   1. Kubernetes Ingress (Grundlagen)
      * [Hintergrund Ingress](/kubernetes/ingress.md)
 
-  1. Kubernetes Ingress (Nginx - deprecated)   
+  1. Kubernetes Ingress (Nginx - deprecated - EOL 03.2026)   
      * [Ingress Controller auf Digitalocean (doks) mit helm installieren](/digitalocean/ingress-auf-digitalocean-mit-helm.md)
      * [Documentation for default ingress nginx](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/)
      * [Beispiel Ingress](/kubectl-examples/04-ingress-nginx.md)
